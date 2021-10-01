@@ -1,0 +1,4 @@
+# September 30, 2021 (Thursday) - Day 1
+After doing a short practice to understand a few of the basic principles, I decided to take some friendly advice and log my progress. So I have decided to start over from the beginning and document my progress. I will not be discussing in great detail what I learned or why I chose a particular methodology. Instead I will allow the code changes to speak about what progress has been made and when I feel there's something interesting I should add, I'll make an entry into this log.
+
+Today I have spent most of my time preparing the repo in a way that will be conducive to showcasing a work-in-progress project. I think I got something that'll work out nicely, but I'll probably tweak things as I go.
