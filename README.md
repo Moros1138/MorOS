@@ -19,6 +19,6 @@ Go for it. You will need to build a cross-compiler by following the guide at [Th
 
 You'll also need to have gnu make, grub, xorriso, mtools, and qemu-system-i386 and their dependencies installed in order to effectively use my makefile.
 
-## But what about building on *fill in the blank* platform that's not Linux...
+## But what about building on **___** platform, and it's not Linux.
 
 Sorry, I'm a Linux daily driver and I don't have the time nor desire to go around figuring out how to do all this on an OS I don't use. However, the guide I am following does seem to have sections dedicated to doing all of this on Windows and MacOS as well. I suggest following the guide yourself to get a working build environment!
