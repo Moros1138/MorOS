@@ -47,7 +47,7 @@ kernel: $(KERNEL_OBJS)
 	$(CC) -T $(SRC)/link.ld -o $(BIN)/MorOS.kernel $(LDFLAGS) $(KERNEL_OBJS)
 
 # build the bootable iso image
-img: kernel
+img: dirs kernel
 	mkdir -p isodir/boot/grub
 	cp $(BIN)/MorOS.kernel isodir/boot/MorOS.kernel
 	cp $(SRC)/grub.cfg isodir/boot/grub/grub.cfg
@@ -55,11 +55,11 @@ img: kernel
 	rm -rf isodir
 
 # run the kernel in qemu
-run: kernel
+run: dirs kernel
 	qemu-system-i386 -kernel $(BIN)/MorOS.kernel
 
 # run the iso image in qemu
-run-img: img
+run-img: dirs img
 	qemu-system-i386 -cdrom $(BIN)/MorOS.iso
 
 clean:
