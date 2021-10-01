@@ -12,3 +12,13 @@ Intially, the code and methodoloy will be heavily borrowed from/influenced by th
 This is a work-in-progress and is not currently in a working state.
 
 The code or methodology contained herein should not be considered useful advice. This repository exists for the entertainment of the folks on the OLC discord and anybody else who stumbles on it.
+
+## But I want to build it!!!
+
+Go for it. You will need to build a cross-compiler by following the guide at [The OSDev Wiki](https://wiki.osdev.org/GCC_Cross-Compiler). I have added the toolchain to my path.
+
+You'll also need to have gnu make, grub, xorriso, mtools, and qemu-system-i386 and their dependencies installed in order to effectively use my makefile.
+
+## But what about building on *fill in the blank* platform that's not Linux...
+
+Sorry, I'm a Linux daily driver and I don't have the time nor desire to go around figuring out how to do all this on an OS I don't use. However, the guide I am following does seem to have sections dedicated to doing all of this on Windows and MacOS as well. I suggest following the guide yourself to get a working build environment!
