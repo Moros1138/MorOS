@@ -1,3 +1,11 @@
+# October 1, 2021 (Friday) - Day 2
+Ok, I don't want to sound like I'm whinging.. but.. omg, no bios interrupts! I knew there had to be some curve ball this was going the throw at me. Now I have to figure out how to get my video and keyboard! ... grumble grumble ...
+
+Reading about how to interact with the hardware. Turns out I've been relying entirely on BIOS for all the things I was doing and thinking was doing things "on my own"... wake up call from hell!
+
+
+
+
 # September 30, 2021 (Thursday) - Still Day 1
 While making my "clear the screen and hello" kernel, I began to tweak the makefile to allow me to build the kernel into a bootable ISO image to make it easier for others to build it and see it for themselves. However, I ran into a little issue with grub-mkrescue, first I forgot to install xorriso. Totally my fault, the guide says it at least twice and I somehow managed to gloss over it. But grub-mkrescue kept giving me an error about `mformat`, which I had never heard of. Thanks to a google search and some helpful answers on the stack that overflows, I discovered that I needed to install the package `mtools` for grub-mkrescue to work. Who knew? Installing things makes things work!
 
