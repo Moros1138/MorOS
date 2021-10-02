@@ -16,11 +16,13 @@
 .section .bss
 .align 16
 stack_bottom:
-.skip 16384 /* set aside 16 KiB for stack stack */
+.space 2*1024*1024; # 2 MiB
 stack_top:
 
 /* code */
 .section .text
+.extern call_constructors
+.extern kmain
 
 .global _start
 .type _start, @function
@@ -31,6 +33,12 @@ _start:
     */
     mov $stack_top, %esp
 
+    /* call our constructors */
+    call call_constructors
+
+    push %eax
+    push %ebx
+    
     /* execute function kmain from kernel.cpp */
     call kmain
 
