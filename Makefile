@@ -12,7 +12,7 @@ OBJ		:=	obj
 SRC		:=	src
 
 # compiler flags
-CFLAGS	:=	-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(INC)
+CFLAGS	:=	-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fno-builtin -Wno-write-strings -I$(INC)
 
 # linker flags
 LDFLAGS	:=	-ffreestanding -O2 -nostdlib -lgcc
@@ -20,6 +20,8 @@ LDFLAGS	:=	-ffreestanding -O2 -nostdlib -lgcc
 # kernel object files
 KERNEL_OBJS	:=\
 	$(OBJ)/boot.o \
+	$(OBJ)/Terminal.o \
+	$(OBJ)/Randomizer.o \
 	$(OBJ)/kernel.o
 
 # make all
