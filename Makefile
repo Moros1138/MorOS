@@ -21,7 +21,9 @@ LDFLAGS	:=	-ffreestanding -O2 -nostdlib -lgcc
 KERNEL_OBJS	:=\
 	$(OBJ)/boot.o \
 	$(OBJ)/Terminal.o \
+	$(OBJ)/MemoryManager.o \
 	$(OBJ)/Randomizer.o \
+	$(OBJ)/utils.o \
 	$(OBJ)/kernel.o
 
 # make all
@@ -62,7 +64,7 @@ run: dirs kernel
 
 # run the iso image in qemu
 run-img: dirs img
-	qemu-system-i386 -cdrom $(BIN)/MorOS.iso
+	qemu-system-i386 -cdrom $(BIN)/MorOS.iso -m 4G
 
 clean:
 	rm -f $(BIN)/MorOS.iso $(BIN)/MorOS.kernel $(OBJ)/*.o

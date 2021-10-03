@@ -135,4 +135,43 @@ namespace MorOS
         attribute = attr;
     }
 
+    void clear_screen()
+    {
+        Terminal::activeTerminal->ClearScreen();
+    }
+
+    void putdec(int num, bool unsigned_value)
+    {
+        char buf[256];
+        itoa(buf, (unsigned_value) ? 'u' : 'd', num);
+        Terminal::activeTerminal->PrintString(buf);
+    }
+
+    void puthex(int num)
+    {
+        char buf[9] = { 0 };
+        char* p = buf;
+
+        for(int bits = 28; bits >= 0; bits -= 4)
+        {
+            *p = (num >> bits) & 0xf;
+            *p = (*p < 10) ? *p + '0' : *p + 'a' - 10;
+            ++p;
+        }
+        
+        *p = '\0';
+
+        Terminal::activeTerminal->PrintString(buf);
+    }
+
+    void puts(const char* str)
+    {
+        Terminal::activeTerminal->PrintString(str);
+    }
+
+    void putc(const char c)
+    {
+        Terminal::activeTerminal->PrintChar(c);
+    }
+
 } // MorOS

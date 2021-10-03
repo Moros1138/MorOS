@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <utils.h>
+
 #define VGA_WIDTH   80
 #define VGA_HEIGHT  25
 
@@ -54,6 +56,12 @@ namespace MorOS
         size_t height;
 
     };
+    
+    void clear_screen();
+    void putdec(int num, bool unsigned_value = false);
+    void puthex(int num);
+    void puts(const char* str);
+    void putc(const char c);
 
 } // MorOS
 
