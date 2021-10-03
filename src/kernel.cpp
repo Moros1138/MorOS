@@ -52,10 +52,15 @@ extern "C" void kmain(multiboot_info_t* mbd, uint32_t magic)
             // if(mmmt->addr_high == 0 && mmmt->addr_low == 0x100000)
             // {
                 printf("    --- BEGIN ENTRY ---\n");
-                printf("Start Addr: %lu\n", mmmt->addr_low);
-                printf("Length: %lu\n", mmmt->len_low);
-                printf("Size: %d\n", mmmt->size);
-                printf("Type: %d\n", mmmt->type);
+#ifndef PRINTF_DISABLE_SUPPORT_LONG_LONG
+                printf("Start Addr: %lx\n", mmmt->addr);
+                printf("Length:     %lx\n", mmmt->len);
+#else
+                printf("Start Addr: %08lx %08lx\n", mmmt->addr_high, mmmt->addr_low);
+                printf("Length:     %08lx %08lx\n", mmmt->len_high, mmmt->len_low);
+#endif
+                printf("Size:       %d\n", mmmt->size);
+                printf("Type:       %d\n", mmmt->type);
                 printf("    --- END   ENTRY ---\n");
             // }
         } // mmmt->type
