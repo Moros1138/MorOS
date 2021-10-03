@@ -15,11 +15,13 @@ namespace MorOS
     {
     public:
         MemoryManager();
-        MemoryManager(multiboot_info_t* mbd);
         ~MemoryManager();
 
         static MemoryManager* activeMemoryManager;
+    
     };
+
+    
 
     void* malloc(size_t size);
     void free(void* mem);

@@ -13,6 +13,7 @@ SRC		:=	src
 
 # compiler flags
 CFLAGS	:=	-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fno-builtin -Wno-write-strings -I$(INC)
+CFLAGS	+= -DPRINTF_DISABLE_SUPPORT_LONG_LONG
 
 # linker flags
 LDFLAGS	:=	-ffreestanding -O2 -nostdlib -lgcc
@@ -21,6 +22,7 @@ LDFLAGS	:=	-ffreestanding -O2 -nostdlib -lgcc
 KERNEL_OBJS	:=\
 	$(OBJ)/boot.o \
 	$(OBJ)/Terminal.o \
+	$(OBJ)/printf.o \
 	$(OBJ)/MemoryManager.o \
 	$(OBJ)/Randomizer.o \
 	$(OBJ)/utils.o \
@@ -64,7 +66,7 @@ run: dirs kernel
 
 # run the iso image in qemu
 run-img: dirs img
-	qemu-system-i386 -cdrom $(BIN)/MorOS.iso -m 4G
+	qemu-system-i386 -cdrom $(BIN)/MorOS.iso
 
 clean:
 	rm -f $(BIN)/MorOS.iso $(BIN)/MorOS.kernel $(OBJ)/*.o

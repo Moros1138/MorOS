@@ -42,8 +42,27 @@ extern "C" void kmain(multiboot_info_t* mbd, uint32_t magic)
     // our global randomizer
     Randomizer randomizer{};
     
+    for(uint32_t i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) 
+    {
+        multiboot_memory_map_t* mmmt = (multiboot_memory_map_t*) (mbd->mmap_addr + i);
+
+        if(mmmt->type == MULTIBOOT_MEMORY_AVAILABLE)
+        {
+            // do something with this memory block!
+            // if(mmmt->addr_high == 0 && mmmt->addr_low == 0x100000)
+            // {
+                printf("    --- BEGIN ENTRY ---\n");
+                printf("Start Addr: %lu\n", mmmt->addr_low);
+                printf("Length: %lu\n", mmmt->len_low);
+                printf("Size: %d\n", mmmt->size);
+                printf("Type: %d\n", mmmt->type);
+                printf("    --- END   ENTRY ---\n");
+            // }
+        } // mmmt->type
+    }
+
     // our global memory manager
-    MemoryManager memoryManager(mbd);
+    // MemoryManager memoryManager();
 
     // // memory information provided by mutliboot specification
     // size_t max_memory = mbd->mem_upper * 1024;
