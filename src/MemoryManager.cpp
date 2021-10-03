@@ -11,7 +11,19 @@ namespace MorOS
     {
         activeMemoryManager = this;
     }
-
+    
+    MemoryManager::MemoryManager(size_t address, size_t size)
+    {
+        activeMemoryManager = this;
+        start = address;
+        end = address + size;
+        
+        printf("    --- MEMORY MANAGER ---\n");
+        printf("Start:   %08lx\n", start);
+        printf("End:     %08lx\n", end);
+    }
+    
+    
     MemoryManager::~MemoryManager()
     {
 

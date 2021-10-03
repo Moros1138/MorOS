@@ -41,33 +41,26 @@ extern "C" void kmain(multiboot_info_t* mbd, uint32_t magic)
 
     // our global randomizer
     Randomizer randomizer{};
-    
+
+    multiboot_memory_map_t* mmmt = 0;
+
     for(uint32_t i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) 
     {
-        multiboot_memory_map_t* mmmt = (multiboot_memory_map_t*) (mbd->mmap_addr + i);
+        mmmt = (multiboot_memory_map_t*) (mbd->mmap_addr + i);
 
-        if(mmmt->type == MULTIBOOT_MEMORY_AVAILABLE)
+        if(mmmt->type == MULTIBOOT_MEMORY_AVAILABLE &&
+            mmmt->addr_high == 0 &&
+            mmmt->addr_low == 0x100000)
         {
-            // do something with this memory block!
-            // if(mmmt->addr_high == 0 && mmmt->addr_low == 0x100000)
-            // {
-                printf("    --- BEGIN ENTRY ---\n");
-#ifndef PRINTF_DISABLE_SUPPORT_LONG_LONG
-                printf("Start Addr: %lx\n", mmmt->addr);
-                printf("Length:     %lx\n", mmmt->len);
-#else
-                printf("Start Addr: %08lx %08lx\n", mmmt->addr_high, mmmt->addr_low);
-                printf("Length:     %08lx %08lx\n", mmmt->len_high, mmmt->len_low);
-#endif
-                printf("Size:       %d\n", mmmt->size);
-                printf("Type:       %d\n", mmmt->type);
-                printf("    --- END   ENTRY ---\n");
-            // }
-        } // mmmt->type
+            break;
+        }
     }
 
+
     // our global memory manager
-    // MemoryManager memoryManager();
+    if(mmmt != 0)
+        MemoryManager memoryManager(mmmt->addr_low, mmmt->len_low);
+        
 
     // // memory information provided by mutliboot specification
     // size_t max_memory = mbd->mem_upper * 1024;

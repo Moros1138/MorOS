@@ -15,10 +15,14 @@ namespace MorOS
     {
     public:
         MemoryManager();
+        MemoryManager(size_t address, size_t size);
         ~MemoryManager();
 
         static MemoryManager* activeMemoryManager;
     
+    private:
+        size_t start;
+        size_t end;
     };
 
     
