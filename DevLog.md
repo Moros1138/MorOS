@@ -1,3 +1,10 @@
+# October 3, 2021 (Sunday) - Day 4
+Turns out the ``printf`` is a bigger beast than I had thought and it definitely turned into one of those wheels I don't feel like re-inventing (at least for now). So to put a pin on it until some future time I have chosen to use a drop-in ``printf`` implementation [I found on github. It's pretty awesome and works like a charm](https://github.com/mpaland/printf)!
+
+Now I can shift my focus back to memory!
+
+
+
 # October 2, 2021 (Saturday) - Day 3
 In my quest for memory management, I learned that my abilty to represent variables on the screen was woefully inadequate. So I spent alot of my time today learning how to use multiboot's memory stuff to get a better understanding of how to know that I'm accessing memory that is both in existence and availble for my use (I don't want to presume that because I'm the kernel, I own all.. apparently that's not true... so much for my all powerful god-like powers!).
 
