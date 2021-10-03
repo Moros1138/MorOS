@@ -19,8 +19,8 @@ namespace MorOS
         end = address + size;
         
         printf("    --- MEMORY MANAGER ---\n");
-        printf("Start:   %08lx\n", start);
-        printf("End:     %08lx\n", end);
+        printf("Start: 0x%08lx\n", start);
+        printf("End:   0x%08lx\n", end);
     }
     
     
