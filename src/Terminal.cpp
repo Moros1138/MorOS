@@ -105,12 +105,8 @@ namespace MorOS
 
     void Terminal::PrintString(const char* str)
     {
-        size_t index = 0;
-        while(str[index])
-        {
+        for(size_t index = 0; str[index] != '\0'; index++)
             PrintChar(str[index]);
-            index++;
-        }
     }
 
     void Terminal::ClearScreen()
@@ -175,3 +171,5 @@ namespace MorOS
     }
 
 } // MorOS
+
+

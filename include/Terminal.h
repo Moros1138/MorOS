@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <printf.h>
 #include <utils.h>
 
 #define VGA_WIDTH   80

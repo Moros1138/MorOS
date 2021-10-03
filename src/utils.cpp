@@ -1,5 +1,10 @@
 #include <utils.h>
 
+extern "C" void _putchar(char character)
+{
+    MorOS::Terminal::activeTerminal->PrintChar(character);
+}
+
 namespace MorOS
 {
     
@@ -58,7 +63,5 @@ namespace MorOS
             p2--;
         }
     }
-
-
 
 } // MorOS

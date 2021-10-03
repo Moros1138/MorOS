@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <Terminal.h>
+
 namespace MorOS
 {
     
