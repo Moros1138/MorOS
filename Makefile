@@ -24,6 +24,7 @@ KERNEL_OBJS	:=\
 	$(OBJ)/Terminal.o \
 	$(OBJ)/printf.o \
 	$(OBJ)/MemoryManager.o \
+	$(OBJ)/test.o \
 	$(OBJ)/Randomizer.o \
 	$(OBJ)/utils.o \
 	$(OBJ)/kernel.o
@@ -47,6 +48,9 @@ $(OBJ)/%.o: $(SRC)/%.c
 # compile C++
 $(OBJ)/%.o: $(SRC)/%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS)
+
+$(OBJ)/%.o: $(SRC)/%.txt
+	$(LD) -r -b binary $< -o $@
 
 # link the kernel
 kernel: $(KERNEL_OBJS)

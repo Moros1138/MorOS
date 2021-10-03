@@ -27,6 +27,9 @@ extern "C" void call_constructors()
         (*i)();
 }
 
+extern int _binary_src_test_txt_start;
+extern int _binary_src_test_txt_size;
+
 /*
     this is labelled as extern "C" to prevent the C++ compiler from
     mangling the function name. this allows it to be called from
@@ -60,8 +63,13 @@ extern "C" void kmain(multiboot_info_t* mbd, uint32_t magic)
     // our global memory manager
     if(mmmt != 0)
         MemoryManager memoryManager(mmmt->addr_low, mmmt->len_low);
-        
 
+    int   test_txt_size = (int)&_binary_src_test_txt_size;
+    char* test_txt      = (char*)&_binary_src_test_txt_start;
+
+
+    printf("\n\nData:\n%s\n\nSize: %ld\nLocation: 0x%08lx\n", test_txt, test_txt_size, (size_t)test_txt);
+    
     // // memory information provided by mutliboot specification
     // size_t max_memory = mbd->mem_upper * 1024;
     
