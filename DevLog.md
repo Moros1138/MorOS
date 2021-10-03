@@ -1,3 +1,11 @@
+# October 2, 2021 (Saturday) - Day 3
+In my quest for memory management, I learned that my abilty to represent variables on the screen was woefully inadequate. So I spent alot of my time today learning how to use multiboot's memory stuff to get a better understanding of how to know that I'm accessing memory that is both in existence and availble for my use (I don't want to presume that because I'm the kernel, I own all.. apparently that's not true... so much for my all powerful god-like powers!).
+
+Anyways, as I got started with the memory management I started to realize that I REALLY REALLY REALLY want ``printf`` which I don't have currently. So been beefing up my terminal output routines.
+
+
+
+
 # October 1, 2021 (Friday) - Day 2
 Ok, I don't want to sound like I'm whinging.. but.. omg, no bios interrupts! I knew there had to be some curve ball this was going the throw at me. Now I have to figure out how to get my video and keyboard! ... grumble grumble ...
 
