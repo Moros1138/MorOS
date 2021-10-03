@@ -1,3 +1,8 @@
+# October 3, 2021 (Sunday) - Still Day 4 
+Totally learned how to embed assets into the kernel image AND how to access it from in the C/C++ code. This basically negates my need to have any sort of memory manager. I may stick a pin in the memory manager and shift my focus back to getting GDT and IDT going so I can start responding to interrupts. 
+
+
+
 # October 3, 2021 (Sunday) - Day 4
 Turns out the ``printf`` is a bigger beast than I had thought and it definitely turned into one of those wheels I don't feel like re-inventing (at least for now). So to put a pin on it until some future time I have chosen to use a drop-in ``printf`` implementation [I found on github. It's pretty awesome and works like a charm](https://github.com/mpaland/printf)!
 
