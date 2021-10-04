@@ -70,39 +70,7 @@ extern "C" void kmain(multiboot_info_t* mbd, uint32_t magic)
 
     printf("\n\nData:\n%s\n\nSize: %ld\nLocation: 0x%08lx\n", test_txt, test_txt_size, (size_t)test_txt);
     
-    // // memory information provided by mutliboot specification
-    // size_t max_memory = mbd->mem_upper * 1024;
-    
-    // // 10 MiB pre-calculated
-    // size_t heap_size = 10 * 1024 * 1024;
-
-    // // basically, give me 10 MiB of ram, pretty please
-    // uint8_t* heap_memory = (uint8_t*)(max_memory - heap_size - 10*1024);
-    // char buf[256] = { 0 };
-
-    // puts("MorOS - Max  Memory: ");
-    // itoa(buf, 'x', max_memory);
-    // puts(buf);
-    // puts("\n");
-
-    // puts("MorOS - Heap Memory: ");
-    // itoa(buf, 'x', (size_t)heap_memory);
-    // puts(buf);
-    // puts("\n");
-
-    // puts("MorOS - Heap Size:   ");
-    // itoa(buf, 'x', heap_size);
-    // puts(buf);
-    // puts("\n");
-
-    // char buf[] = "Hello, World!\n";
-    // strcpy((char*)heap_memory, buf);
-
-    // puts("\nThe following is contained within the heap memory:\n\n");
-    // puts((char*)heap_memory);
-    // puts("\n");
-
-    // let's hang out here forever!
+   // let's hang out here forever!
     while(1)
     { 
     }
