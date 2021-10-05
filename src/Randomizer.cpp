@@ -16,6 +16,11 @@ namespace MorOS
 		// combination on my LUGGAGE!
 	}
 
+	Randomizer::~Randomizer()
+	{
+
+	}
+	
 	void Randomizer::SetSeed(uint32_t s)
 	{
 		seed = s;
