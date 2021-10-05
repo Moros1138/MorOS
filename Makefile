@@ -3,7 +3,8 @@
 # https://wiki.osdev.org/GCC_Cross-Compiler
 #
 CC		:=	i686-elf-g++
-AS		:=	i686-elf-as
+# AS		:=	i686-elf-as -c
+AS		:=	nasm -felf32
 LD		:=	i686-elf-ld
 
 # debug configuration
@@ -23,7 +24,7 @@ OBJ		:=	obj
 SRC		:=	src
 
 # compiler flags
-CFLAGS	:=	-ffreestanding $(BUILD) -Wall -Wextra -fno-exceptions -fno-rtti -fno-builtin -Wno-write-strings -I$(INC)
+CFLAGS	:=	-ffreestanding $(BUILD) -Wall -Wextra -fno-use-cxa-atexit -fno-exceptions -fno-rtti -fno-builtin -Wno-write-strings -I$(INC)
 CFLAGS	+=	-DPRINTF_DISABLE_SUPPORT_LONG_LONG
 
 # linker flags
@@ -37,6 +38,7 @@ KERNEL_OBJS	:=\
 	$(OBJ)/printf.o \
 	$(OBJ)/MemoryManager.o \
 	$(OBJ)/utils.o \
+	$(OBJ)/test.o \
 	$(OBJ)/Randomizer.o
 
 # make all
@@ -49,7 +51,7 @@ dirs:
 
 # assemble!
 $(OBJ)/%.o: $(SRC)/%.s
-	$(AS) -c $< -o $@
+	$(AS) $< -o $@
 
 # compile C
 $(OBJ)/%.o: $(SRC)/%.c

@@ -1,52 +1,46 @@
-/* variables to be used to generate the multiboot header */
-.set ALIGN,     1<<0
-.set MEMINFO,   1<<1
-.set FLAGS,     ALIGN | MEMINFO
-.set MAGIC,     0x1badb002
-.set CHECKSUM,  -(MAGIC + FLAGS)
+[BITS 32]
+global _start
 
-/* multiboot header */
-.section .multiboot
-.align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
+    MULTIBOOT_PAGE_ALIGN	equ 1<<0
+    MULTIBOOT_MEMORY_INFO	equ 1<<1
+    MULTIBOOT_HEADER_MAGIC  equ 0x1badb002
+    MULTIBOOT_HEADER_FLAGS	equ MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO
+    MULTIBOOT_CHECKSUM      equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
-/* read-write uninitialized data*/
-.section .bss
-.align 16
+SECTION .multiboot
+ALIGN 4
+    dd MULTIBOOT_HEADER_MAGIC
+    dd MULTIBOOT_HEADER_FLAGS
+    dd MULTIBOOT_CHECKSUM
+
+
+SECTION .bss
+ALIGN 16
 stack_bottom:
-.space 2*1024*1024; # 2 MiB
+    resb 2*1024*1024 ; # 2 MiB
 stack_top:
 
-/* code */
-.section .text
-.extern call_constructors
-.extern kmain
+; code
+SECTION .text
+extern call_constructors
+extern kmain
 
-.global _start
-.type _start, @function
+
 _start:
-    /*
-        set the stack pointer to the top of the location
-        we set aside for the stack.
-    */
-    mov $stack_top, %esp
-
-    /* call our constructors */
+    mov esp, stack_top
+    
+    ; call our constructors
     call call_constructors
 
-    push %eax
-    push %ebx
+    ; push our multiboot and magic parameters
+    push eax
+    push ebx
     
-    /* execute function kmain from kernel.cpp */
+    ; execute function kmain from kernel.cpp
     call kmain
-
-    /* clear interrupt flag */
+    
     cli
 
-    /* halt forever */
-1:  hlt
-    jmp 1b
-
-.size _start, . - _start
+loop_forever:
+    hlt
+    jmp loop_forever
