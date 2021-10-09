@@ -2,13 +2,16 @@
 
 #include "types.h"
 #include "monitor.h"
+#include "descriptor_tables.h"
 #include "memory.h"
 
 extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 {
     // our global monitor
     MorOS::Monitor monitor{};
-    
+
+    init_descriptor_tables();
+
     multiboot_memory_map_t* mmmt = 0;
     
     // cycle through the memory map in search of the memory chunk at 1MiB
@@ -28,6 +31,8 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     if(mmmt != 0)
         MorOS::MemoryManager memoryManager(mmmt->addr_low, mmmt->len_low);
 
+    // moment of fucking truth
+    asm volatile("int $0x04;");
+
     // hang out here forever
-    while(1);
 }
