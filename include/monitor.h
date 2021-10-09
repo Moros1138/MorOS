@@ -26,6 +26,8 @@ namespace MorOS
     public:
         void putc(char ch);
         void puts(char* str);
+        void putdec(uint32_t num, bool bSigned = false);
+        void puthex(uint32_t num);
 
     private:
         void move_cursor();

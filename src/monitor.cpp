@@ -63,6 +63,58 @@ namespace MorOS
         }
     }
     
+    void Monitor::putdec(uint32_t num, bool bSigned)
+    {
+        if(num == 0)
+        {
+            puts("0");
+            return;
+        }
+            
+        char buf[32] = { 0 };
+        char buf2[32] = { 0 };
+        
+        uint32_t acc = num;
+
+        int i = 0;
+
+        while(acc > 0)
+        {
+            buf[i] = '0' + acc % 10;
+            acc /= 10; i++;
+        }
+        
+        buf[i] = 0;
+        
+        int j = 0;
+        while(i >= 0)
+        {
+            buf2[j++] = buf[--i];            
+        }
+
+        puts(buf2);
+    }
+    
+    void Monitor::puthex(uint32_t num)
+    {
+        if(num == 0)
+        {
+            puts("00000000");
+            return;
+        }
+
+        char buf[9] = { 0 };
+
+        int index = 0;
+        for(int i = 28; i >= 0; i -= 4)
+        {
+            uint8_t temp = (num >> i) & 0x0f;
+            buf[index++] = (temp > 9) ? temp + 'a' - 10 : temp + '0';
+        }
+        
+        puts(buf);
+    }
+    
     void Monitor::move_cursor()
     {
         // Tell the VGA board we are setting the high cursor byte.
