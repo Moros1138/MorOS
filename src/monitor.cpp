@@ -155,6 +155,13 @@ namespace MorOS
         {
             if(fmt[pos] == '%')
             {
+                if(fmt[pos+1] == 'c')
+                {
+                    int value = va_arg(args, int);
+                    Monitor::activeMonitor->putc(value);
+                    pos += 2;
+                    continue;
+                }
                 if(fmt[pos+1] == 'd')
                 {
                     int32_t value = va_arg(args, int32_t);
