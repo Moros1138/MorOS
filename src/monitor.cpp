@@ -70,7 +70,7 @@ namespace MorOS
             puts("0");
             return;
         }
-            
+        
         char buf[32] = { 0 };
         char buf2[32] = { 0 };
         
@@ -89,7 +89,7 @@ namespace MorOS
         int j = 0;
         while(i >= 0)
         {
-            buf2[j++] = buf[--i];            
+            buf2[j++] = buf[--i];
         }
 
         puts(buf2);

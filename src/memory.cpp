@@ -23,7 +23,6 @@ namespace MorOS
         printf("End:   0x%x - %d\n", end, end);
     }
     
-    
     MemoryManager::~MemoryManager()
     {
 
@@ -40,7 +39,7 @@ namespace MorOS
         (void)(mem);
     }
 
-    // Copy len bytes from src to dest.
+    // copy len bytes from src to dest.
     void memcpy(void *dest, void* src, uint32_t len)
     {
         const uint8_t *sp = (const uint8_t*)src;
@@ -48,7 +47,7 @@ namespace MorOS
         for(; len != 0; len--) *dp++ = *sp++;
     }
 
-    // Write len copies of val into dest.
+    // write len copies of val into dest.
     void memset(void* dest, uint8_t val, uint32_t len)
     {
         uint8_t* temp = (uint8_t*)dest;
