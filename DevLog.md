@@ -1,3 +1,14 @@
+# October 9, 2021 (Saturday) - Day 10
+Lots of things have happened over the last few days. I got started on implementing interrupts only to hit a bit of a brick wall. For reasons I have yet to identify, when I started implementing interrupts it would cause my kernel to boot loop. This was frustrating, to say the least. Then I found a tutorial that does everything I want to do, except in C instead of C++. I spent some time following that tutorial and really getting a better understanding of what was going on. I learned a few things about my previous attempt with C++..
+
+* I fundamentally misunderstood GDT and how to implement it.
+* I fundamentally misunderstood IDT, ISR, the handlers, and how to implement it.
+* Finally, C++ is a complete pain in the ass when it has to interact with a C ABI!!
+
+Anyways, armed with my newly acquired knowledge I have thrown much of the project out to make way for a new (better?) approach and hopefully this time I will be successful and able to move on to the next phase. Fingers crossed?!
+
+
+
 # October 3, 2021 (Sunday) - Still Day 4 
 Totally learned how to embed assets into the kernel image AND how to access it from in the C/C++ code. This basically negates my need to have any sort of memory manager. I may stick a pin in the memory manager and shift my focus back to getting GDT and IDT going so I can start responding to interrupts. 
 
