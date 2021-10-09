@@ -35,6 +35,8 @@ KERNEL_OBJS	:=\
 	$(OBJ)/loader.o \
 	$(OBJ)/io.o \
 	$(OBJ)/monitor.o \
+	$(OBJ)/memory.o \
+	$(OBJ)/random.o \
 	$(OBJ)/main.o
 
 # make all
