@@ -1,3 +1,11 @@
+# October 9, 2021 (Saturday) - Still Day 10
+OMFG... I'm simultaneously relieved and upset right now! After all this time banging my head against the brick wall trying to get this kernel to have interrupts with C++. It turns out the problem wasn't with the code, it was with the build command in the Makefile.
+
+Apparently optimizing is BAD! ``-O2`` was the difference between code that worked and code that broke.
+
+
+
+
 # October 9, 2021 (Saturday) - Day 10
 Lots of things have happened over the last few days. I got started on implementing interrupts only to hit a bit of a brick wall. For reasons I have yet to identify, when I started implementing interrupts it would cause my kernel to boot loop. This was frustrating, to say the least. Then I found a tutorial that does everything I want to do, except in C instead of C++. I spent some time following that tutorial and really getting a better understanding of what was going on. I learned a few things about my previous attempt with C++..
 
