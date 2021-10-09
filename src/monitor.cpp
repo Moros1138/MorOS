@@ -11,6 +11,16 @@ namespace MorOS
         // video ram buffer
         buffer      = (uint16_t*)0xb8000;
         
+        // init cursor
+        outb(0x3D4, 0x09);   // set maximum scan line register to 15
+        outb(0x3D5, 0x0F);
+
+        outb(0x3D4, 0x0B);   // set the cursor end line to 15
+        outb(0x3D5, 0x0F);
+
+        outb(0x3D4, 0x0A);   // set the cursor start line to 14 and enable cursor visibility
+        outb(0x3D5, 0x0E);
+
         // initialize trackers
         cursor_x    = 0;
         cursor_y    = 0;
@@ -18,6 +28,9 @@ namespace MorOS
         
         // default to (BG: black FG: grey)
         attribute   = 0x07;
+        
+        // clear the screen
+        clear();
     }
 
     Monitor::~Monitor()
@@ -71,8 +84,9 @@ namespace MorOS
             return;
         }
         
-        char buf[32] = { 0 };
-        char buf2[32] = { 0 };
+        // buffers are large enough to hold a signed int32_t
+        char buf[12] = { 0 };
+        char buf2[12] = { 0 };
         
         uint32_t acc = num;
 
@@ -115,6 +129,23 @@ namespace MorOS
         puts(buf);
     }
     
+    void Monitor::clear()
+    {
+        uint16_t blank = 0x20 | (attribute << 8);
+        for(int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+            buffer[i] = blank;
+    }
+    
+    void Monitor::show_cursor(bool state)
+    {
+        outb(VGA_COMMAND_PORT, VGA_SET_CURSOR_START);
+        
+        uint8_t data = inb(VGA_DATA_PORT);
+        printf("%d %d\n", cursor_x, cursor_y);
+        printf("Cursor Data: %u\n", data);
+        outb(VGA_DATA_PORT, data);
+    }
+
     void Monitor::move_cursor()
     {
         // Tell the VGA board we are setting the high cursor byte.

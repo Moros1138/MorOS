@@ -11,9 +11,9 @@ namespace MorOS
 {
     constexpr size_t VGA_WIDTH  = 80;
     constexpr size_t VGA_HEIGHT = 25;
-
-    constexpr uint8_t VGA_SET_CURSOR_HIGH_BYTE  = 14;
-    constexpr uint8_t VGA_SET_CURSOR_LOW_BYTE   = 15;
+    constexpr uint8_t VGA_SET_CURSOR_START      = 0x0a;
+    constexpr uint8_t VGA_SET_CURSOR_HIGH_BYTE  = 0x0e;
+    constexpr uint8_t VGA_SET_CURSOR_LOW_BYTE   = 0x0f;
 
     constexpr uint16_t VGA_COMMAND_PORT         = 0x03d4;
     constexpr uint16_t VGA_DATA_PORT            = 0x03d5;
@@ -31,6 +31,9 @@ namespace MorOS
         void puts(char* str);
         void putdec(uint32_t num, bool bSigned = false);
         void puthex(uint32_t num);
+
+        void clear();
+        void show_cursor(bool state);
 
     private:
         void move_cursor();
