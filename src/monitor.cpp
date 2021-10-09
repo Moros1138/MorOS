@@ -133,15 +133,13 @@ namespace MorOS
     void Monitor::scroll()
     {
         int i;
+        // shift text up by 1 line
         for(i = 0 * VGA_WIDTH; i < (VGA_WIDTH * (VGA_HEIGHT-1)); i++)
-        {
             buffer[i] = buffer[i + VGA_WIDTH];
-        }
 
-       for (i = (VGA_HEIGHT-1)*VGA_WIDTH; i < VGA_HEIGHT*VGA_WIDTH; i++)
-       {
+        // clear the last line
+        for (i = (VGA_HEIGHT-1)*VGA_WIDTH; i < VGA_HEIGHT*VGA_WIDTH; i++)
            buffer[i] = 0x0720;
-       }
     }
 
     void printf(char* fmt, ...)
@@ -149,46 +147,24 @@ namespace MorOS
         va_list args;
         va_start(args, fmt);
 
+        #define process_fmt(p, c, func, t) if(fmt[p+1] == c) { t value = va_arg(args, t); Monitor::activeMonitor->func(value); p += 2; continue; }
+        
         size_t pos = 0;
 
         while(fmt[pos] != 0)
         {
             if(fmt[pos] == '%')
             {
-                if(fmt[pos+1] == 'c')
-                {
-                    int value = va_arg(args, int);
-                    Monitor::activeMonitor->putc(value);
-                    pos += 2;
-                    continue;
-                }
-                if(fmt[pos+1] == 'd')
-                {
-                    int32_t value = va_arg(args, int32_t);
-                    Monitor::activeMonitor->putdec(value);
-                    pos += 2;
-                    continue;
-                }
-
-                if(fmt[pos+1] == 'u')
-                {
-                    uint32_t value = va_arg(args, uint32_t);
-                    Monitor::activeMonitor->putdec(value, true);
-                    pos += 2;
-                    continue;
-                }
-                if(fmt[pos+1] == 'x')
-                {
-                    uint32_t value = va_arg(args, uint32_t);
-                    Monitor::activeMonitor->puthex(value);
-                    pos += 2;
-                    continue;
-                }
+                process_fmt(pos, 'c', putc, int);
+                process_fmt(pos, 'd', putdec, uint32_t);
+                process_fmt(pos, 'u', putdec, uint32_t);
+                process_fmt(pos, 'x', puthex, uint32_t);
             }
+            
             Monitor::activeMonitor->putc(fmt[pos++]);
         }
         
-        
+        #undef process_fmt
 
         va_end(args);
     }
