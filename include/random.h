@@ -1,20 +1,18 @@
 #ifndef _MOROS_RANDOMIZER_H
 #define _MOROS_RANDOMIZER_H
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 namespace MorOS
 {
 
-    class Randomizer
+    class Random
     {
     public:
-        Randomizer();
-        ~Randomizer();
+        Random();
+        ~Random();
 
-        static Randomizer* activeRandomizer;
+        static Random* activeRandomizer;
 
     public:
         void SetSeed(uint32_t s);

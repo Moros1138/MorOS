@@ -1,11 +1,11 @@
-#include <Randomizer.h>
+#include "random.h"
 
 namespace MorOS
 {
 
-	Randomizer* Randomizer::activeRandomizer = 0;
+	Random* Random::activeRandomizer = 0;
 
-	Randomizer::Randomizer()
+	Random::Random()
 	{
 		activeRandomizer = this;
 		
@@ -16,18 +16,18 @@ namespace MorOS
 		// combination on my LUGGAGE!
 	}
 
-	Randomizer::~Randomizer()
+	Random::~Random()
 	{
 
 	}
 	
-	void Randomizer::SetSeed(uint32_t s)
+	void Random::SetSeed(uint32_t s)
 	{
 		seed = s;
 	}
 
 	// https://en.wikipedia.org/wiki/Lehmer_random_number_generator#Schrage's_method
-	void Randomizer::Mutate()
+	void Random::Mutate()
 	{
 		// Precomputed parameters for Schrage's method
 		const uint32_t M = 0x7fffffff;
@@ -48,7 +48,7 @@ namespace MorOS
 		seed = result;
 	}
 
-	int Randomizer::GetInteger()
+	int Random::GetInteger()
 	{
 		Mutate();
 		return (int)seed;
