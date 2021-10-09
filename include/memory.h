@@ -1,12 +1,8 @@
 #ifndef _MOROS_MEMORY_MANAGER_H
 #define _MOROS_MEMORY_MANAGER_H
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
-
-#include <Terminal.h>
-#include <multiboot.h>
+#include "types.h"
+#include "monitor.h"
 
 namespace MorOS
 {
@@ -25,10 +21,12 @@ namespace MorOS
         size_t end;
     };
 
-    
-
     void* malloc(size_t size);
     void free(void* mem);
+    
+    void memcpy(void* dest, void* src, uint32_t len);
+    void memset(void* dest, uint8_t val, uint32_t len);
+
 
 } // MorOS
 

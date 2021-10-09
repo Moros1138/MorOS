@@ -1,4 +1,4 @@
-#include <MemoryManager.h>
+#include "memory.h"
 
 using namespace MorOS;
 
@@ -19,8 +19,8 @@ namespace MorOS
         end = address + size;
         
         printf("    --- MEMORY MANAGER ---\n");
-        printf("Start: 0x%08lx\n", start);
-        printf("End:   0x%08lx\n", end);
+        printf("Start: 0x%x - %d\n", start, start);
+        printf("End:   0x%x - %d\n", end, end);
     }
     
     
@@ -38,6 +38,21 @@ namespace MorOS
     void free(void* mem)
     {
         (void)(mem);
+    }
+
+    // Copy len bytes from src to dest.
+    void memcpy(void *dest, void* src, uint32_t len)
+    {
+        const uint8_t *sp = (const uint8_t*)src;
+        uint8_t* dp = (uint8_t*)dest;
+        for(; len != 0; len--) *dp++ = *sp++;
+    }
+
+    // Write len copies of val into dest.
+    void memset(void* dest, uint8_t val, uint32_t len)
+    {
+        uint8_t* temp = (uint8_t*)dest;
+        for ( ; len != 0; len--) *temp++ = val;
     }
 
 } // MorOS
