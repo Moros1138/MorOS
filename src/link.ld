@@ -1,60 +1,28 @@
-ENTRY(_start)
-OUTPUT_FORMAT(elf32-i386)
-OUTPUT_ARCH(i386:i386)
-
+ENTRY(start)
 SECTIONS
 {
-    /*
-        I have no idea what this is about.
-        I think it's saying that starting
-        at this point should be 1 megabyte
-        into RAM? or perhaps the kernel image?
 
-        edit: yea, the kernel image is only
-        like 10K (so far), so there's no way
-        in hell we're starting out at 1 meg,
-        I'm thinking this is a location in
-        memory
-    */
-    . = 1M;
-    
-    /* multiboot and kernel code */
-    .text BLOCK(4K) : ALIGN(4K)
+    .text 0x100000 :
     {
-        *(.multiboot)
+        code = .; _code = .; __code = .;
         *(.text)
+        . = ALIGN(4096);
     }
-    
-    /* read-only data */
-    .rodata BLOCK(4K) : ALIGN(4K)
-    {
-        *(.rodata)
-    }
-    
-    /* read/write initialized data */
-    .data BLOCK(4K) : ALIGN(4K)
-    {
-        start_ctors = .;
-        KEEP(*( .init_array ));
-        KEEP(*(SORT_BY_INIT_PRIORITY( .init_array.* )));
-        end_ctors = .;
 
+    .data :
+    {
+        data = .; _data = .; __data = .;
         *(.data)
-    }
-    
-    /*
-        read/write unintialized data
-        this is where the stack lives
-    */
-    .bss BLOCK(4K) : ALIGN(4K)
-    {
-        *(COMMON)
-        *(.bss)
+        *(.rodata)
+        . = ALIGN(4096);
     }
 
-    /DISCARD/ :
+    .bss :
     {
-        *(.fini_array*)
-        *(.comment)
+        bss = .; _bss = .; __bss = .;
+        *(.bss)
+        . = ALIGN(4096);
     }
+
+    end = .; _end = .; __end = .;
 }

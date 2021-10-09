@@ -24,22 +24,18 @@ OBJ		:=	obj
 SRC		:=	src
 
 # compiler flags
-CFLAGS	:=	-ffreestanding $(BUILD) -Wall -Wextra -fno-use-cxa-atexit -fno-exceptions -fno-rtti -fno-builtin -Wno-write-strings -I$(INC)
+CFLAGS	:=	-I$(INC) $(BUILD) -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
 CFLAGS	+=	-DPRINTF_DISABLE_SUPPORT_LONG_LONG
 
 # linker flags
-LDFLAGS	:=	-ffreestanding $(BUILD) -nostdlib -lgcc
+LDFLAGS	:=	
 
 # kernel object files
 KERNEL_OBJS	:=\
-	$(OBJ)/kernel.o \
-	$(OBJ)/boot.o \
-	$(OBJ)/Terminal.o \
-	$(OBJ)/printf.o \
-	$(OBJ)/MemoryManager.o \
-	$(OBJ)/utils.o \
-	$(OBJ)/test.o \
-	$(OBJ)/Randomizer.o
+	$(OBJ)/loader.o \
+	$(OBJ)/io.o \
+	$(OBJ)/monitor.o \
+	$(OBJ)/main.o
 
 # make all
 all: dirs img
@@ -50,7 +46,7 @@ dirs:
 	mkdir -p $(OBJ)
 
 # assemble!
-$(OBJ)/%.o: $(SRC)/%.s
+$(OBJ)/%.o: $(SRC)/%.asm
 	$(AS) $< -o $@
 
 # compile C
@@ -66,7 +62,7 @@ $(OBJ)/%.o: $(SRC)/%.txt
 
 # link the kernel
 kernel: $(KERNEL_OBJS)
-	$(CC) -T $(SRC)/link.ld -o $(BIN)/MorOS.kernel $(LDFLAGS) $(KERNEL_OBJS)
+	$(LD) -T $(SRC)/link.ld -o $(BIN)/MorOS.kernel $(LDFLAGS) $(KERNEL_OBJS)
 
 # build the bootable iso image
 img: dirs kernel
