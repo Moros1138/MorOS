@@ -1,8 +1,11 @@
 #ifndef _MOROS_MONITOR_H
 #define _MOROS_MONITOR_H
 
+#include <stdarg.h>
+
 #include "types.h"
 #include "io.h"
+#include "memory.h"
 
 namespace MorOS
 {
@@ -46,6 +49,7 @@ namespace MorOS
         uint8_t     attribute;
     };
 
+    void printf(char* fmt, ...);
 
 } // MorOS
 

@@ -144,4 +144,46 @@ namespace MorOS
        }
     }
 
+    void printf(char* fmt, ...)
+    {
+        va_list args;
+        va_start(args, fmt);
+
+        size_t pos = 0;
+
+        while(fmt[pos] != 0)
+        {
+            if(fmt[pos] == '%')
+            {
+                if(fmt[pos+1] == 'd')
+                {
+                    int32_t value = va_arg(args, int32_t);
+                    Monitor::activeMonitor->putdec(value);
+                    pos += 2;
+                    continue;
+                }
+
+                if(fmt[pos+1] == 'u')
+                {
+                    uint32_t value = va_arg(args, uint32_t);
+                    Monitor::activeMonitor->putdec(value, true);
+                    pos += 2;
+                    continue;
+                }
+                if(fmt[pos+1] == 'x')
+                {
+                    uint32_t value = va_arg(args, uint32_t);
+                    Monitor::activeMonitor->puthex(value);
+                    pos += 2;
+                    continue;
+                }
+            }
+            Monitor::activeMonitor->putc(fmt[pos++]);
+        }
+        
+        
+
+        va_end(args);
+    }
+
 } // MorOS
