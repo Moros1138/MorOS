@@ -22,9 +22,7 @@ LDFLAGS	:=
 # kernel object files
 KERNEL_OBJS	:=\
 	$(OBJ)/loader.o \
-	$(OBJ)/gdt.o \
 	$(OBJ)/descriptor_tables.o \
-	$(OBJ)/interrupts.o \
 	$(OBJ)/isr.o \
 	$(OBJ)/io.o \
 	$(OBJ)/monitor.o \
