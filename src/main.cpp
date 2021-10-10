@@ -4,6 +4,7 @@
 #include "monitor.h"
 #include "gdt.h"
 #include "idt.h"
+#include "timer.h"
 #include "memory.h"
 
 extern "C" void _main(multiboot_info_t* mbd, uint32_t)
@@ -12,7 +13,7 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     MorOS::Monitor monitor{};
     MorOS::GlobalDescriptorTable gdt{};
     MorOS::InterruptManager interruptManager{};
-    
+
     multiboot_memory_map_t* mmmt = 0;
     
     // cycle through the memory map in search of the memory chunk at 1MiB
@@ -31,12 +32,10 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     // if we have a memory chunk at 1MiB, let's totally use it!
     if(mmmt != 0)
         MorOS::MemoryManager memoryManager(mmmt->addr_low, mmmt->len_low);
-
-    // moment of fucking truth
-    asm volatile("int $0x04;");
-    asm volatile("int $0x05;");
-    asm volatile("int $0x06;");
-    asm volatile("int $0x07;");
-
-    // hang out here forever
+    
+    MorOS::Timer(100);
+    
+    
+    // just chill out forever!
+    while(1);
 }
