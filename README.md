@@ -21,4 +21,4 @@ You'll also need to have gnu make, grub, xorriso, mtools, and qemu-system-i386 a
 
 ## But what about building on **___** platform, and it's not Linux.
 
-Sorry, I'm a Linux daily driver and I don't have the time nor desire to go around figuring out how to do all this on an OS I don't use. However, the guide I am following does seem to have sections dedicated to doing all of this on Windows and MacOS as well. I suggest following the guide yourself to get a working build environment!
+Check to see if there are already instructions for how to build the GCC Cross-Compiler on [The OSDev Wiki](https://wiki.osdev.org/GCC_Cross-Compiler). If there's not instructions for your platform, I apologize and I don't really have any advice for you.
