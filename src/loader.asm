@@ -27,7 +27,12 @@ start:
     
     cli
     call _main
-    jmp $
+
+    cli
+
+loop_forever:
+    hlt
+    jmp loop_forever
 
 [GLOBAL gdt_flush]    ; Allows the C code to call gdt_flush().
 
