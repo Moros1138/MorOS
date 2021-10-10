@@ -2,8 +2,6 @@
 
 namespace MorOS
 {
-
-    
     InterruptManager::GateDescriptor::GateDescriptor()
     {
         base_lo   = 0;
@@ -34,7 +32,7 @@ namespace MorOS
         idt_ptr[0] = sizeof(MorOS::InterruptManager::GateDescriptor) * 256 - 1;
         idt_ptr[2] = ((uint32_t)&interrupts >> 16) & 0x0000ffff;
         idt_ptr[1] = ((uint32_t)&interrupts) & 0x0000ffff;
-
+        
         interrupts[ 0].Set((uint32_t)isr0 , 0x08, 0x8E);
         interrupts[ 1].Set((uint32_t)isr1 , 0x08, 0x8E);
         interrupts[ 2].Set((uint32_t)isr2 , 0x08, 0x8E);
@@ -67,6 +65,36 @@ namespace MorOS
         interrupts[29].Set((uint32_t)isr29, 0x08, 0x8E);
         interrupts[30].Set((uint32_t)isr30, 0x08, 0x8E);
         interrupts[31].Set((uint32_t)isr31, 0x08, 0x8E);
+
+
+        // remap irq table
+        outb(0x20, 0x11);
+        outb(0xA0, 0x11);
+        outb(0x21, 0x20);
+        outb(0xA1, 0x28);
+        outb(0x21, 0x04);
+        outb(0xA1, 0x02);
+        outb(0x21, 0x01);
+        outb(0xA1, 0x01);
+        outb(0x21, 0x0);
+        outb(0xA1, 0x0);
+
+        interrupts[32].Set((uint32_t)irq0 , 0x08, 0x8E);
+        interrupts[33].Set((uint32_t)irq1 , 0x08, 0x8E);
+        interrupts[34].Set((uint32_t)irq2 , 0x08, 0x8E);
+        interrupts[35].Set((uint32_t)irq3 , 0x08, 0x8E);
+        interrupts[36].Set((uint32_t)irq4 , 0x08, 0x8E);
+        interrupts[37].Set((uint32_t)irq5 , 0x08, 0x8E);
+        interrupts[38].Set((uint32_t)irq6 , 0x08, 0x8E);
+        interrupts[39].Set((uint32_t)irq7 , 0x08, 0x8E);
+        interrupts[40].Set((uint32_t)irq8 , 0x08, 0x8E);
+        interrupts[41].Set((uint32_t)irq9 , 0x08, 0x8E);
+        interrupts[42].Set((uint32_t)irq10, 0x08, 0x8E);
+        interrupts[43].Set((uint32_t)irq11, 0x08, 0x8E);
+        interrupts[44].Set((uint32_t)irq12, 0x08, 0x8E);
+        interrupts[45].Set((uint32_t)irq13, 0x08, 0x8E);
+        interrupts[46].Set((uint32_t)irq14, 0x08, 0x8E);
+        interrupts[47].Set((uint32_t)irq15, 0x08, 0x8E);
 
         idt_flush((uint32_t)&idt_ptr);
     }

@@ -2,7 +2,6 @@
 #define _MOROS_GDT_H
 
 #include "types.h"
-#include "memory.h"
 
 extern "C" void gdt_flush(uint32_t);
 
