@@ -1,3 +1,8 @@
+# Octover 10, 2021 (Sunday) - Day 11
+I feel like I've accomplished alot today! I have implemented and refactored the GDT and IDT. Implemented ISR and IRQ and have a working timer! Now I'm going to move on to getting user input from the keyboard and mouse! Wish me luck!
+
+
+
 # October 9, 2021 (Saturday) - Still Day 10
 OMFG... I'm simultaneously relieved and upset right now! After all this time banging my head against the brick wall trying to get this kernel to have interrupts with C++. It turns out the problem wasn't with the code, it was with the build command in the Makefile.
 
