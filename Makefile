@@ -23,7 +23,7 @@ LDFLAGS	:=
 KERNEL_OBJS	:=\
 	$(OBJ)/loader.o \
 	$(OBJ)/gdt.o \
-	$(OBJ)/descriptor_tables.o \
+	$(OBJ)/idt.o \
 	$(OBJ)/isr.o \
 	$(OBJ)/io.o \
 	$(OBJ)/monitor.o \

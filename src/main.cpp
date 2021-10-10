@@ -3,7 +3,7 @@
 #include "types.h"
 #include "monitor.h"
 #include "gdt.h"
-#include "descriptor_tables.h"
+#include "idt.h"
 #include "memory.h"
 
 extern "C" void _main(multiboot_info_t* mbd, uint32_t)
@@ -11,9 +11,8 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     // our global monitor
     MorOS::Monitor monitor{};
     MorOS::GlobalDescriptorTable gdt{};
-
-    init_descriptor_tables();
-
+    MorOS::InterruptManager interruptManager{};
+    
     multiboot_memory_map_t* mmmt = 0;
     
     // cycle through the memory map in search of the memory chunk at 1MiB
@@ -35,6 +34,9 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 
     // moment of fucking truth
     asm volatile("int $0x04;");
+    asm volatile("int $0x05;");
+    asm volatile("int $0x06;");
+    asm volatile("int $0x07;");
 
     // hang out here forever
 }
