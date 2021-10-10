@@ -2,6 +2,7 @@
 
 #include "types.h"
 #include "monitor.h"
+#include "gdt.h"
 #include "descriptor_tables.h"
 #include "memory.h"
 
@@ -9,6 +10,7 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 {
     // our global monitor
     MorOS::Monitor monitor{};
+    MorOS::GlobalDescriptorTable gdt{};
 
     init_descriptor_tables();
 
