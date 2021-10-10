@@ -12,14 +12,14 @@ namespace MorOS
         buffer      = (uint16_t*)0xb8000;
         
         // init cursor
-        outb(0x3D4, 0x09);   // set maximum scan line register to 15
-        outb(0x3D5, 0x0F);
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_MAX_SCAN);   // set maximum scan line register to 15
+        outb(VGA_DATA_PORT , 15);
 
-        outb(0x3D4, 0x0B);   // set the cursor end line to 15
-        outb(0x3D5, 0x0F);
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_END);   // set the cursor end line to 15
+        outb(VGA_DATA_PORT , 15);
 
-        outb(0x3D4, 0x0A);   // set the cursor start line to 14 and enable cursor visibility
-        outb(0x3D5, 0x0E);
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_START);   // set the cursor start line to 14 and enable cursor visibility
+        outb(VGA_DATA_PORT , 14);
 
         // initialize trackers
         cursor_x    = 0;
@@ -138,24 +138,25 @@ namespace MorOS
     
     void Monitor::show_cursor(bool state)
     {
-        outb(VGA_COMMAND_PORT, VGA_SET_CURSOR_START);
-        
-        uint8_t data = inb(VGA_DATA_PORT);
-        printf("%d %d\n", cursor_x, cursor_y);
-        printf("Cursor Data: %u\n", data);
-        outb(VGA_DATA_PORT, data);
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_START);
+        outb(VGA_DATA_PORT, (state) ? 0x0d : 0x2d);
     }
-
+    
+    void Monitor::set_color(uint8_t fg, uint8_t bg)
+    {
+        attribute = fg | (bg << 8);
+    }
+    
     void Monitor::move_cursor()
     {
         // Tell the VGA board we are setting the high cursor byte.
-        outb(VGA_COMMAND_PORT, VGA_SET_CURSOR_HIGH_BYTE);
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_HIGH_BYTE);
 
         // Send the high cursor byte.
         outb(VGA_DATA_PORT, index >> 8);
         
         // Tell the VGA board we are setting the low cursor byte.
-        outb(VGA_COMMAND_PORT, VGA_SET_CURSOR_LOW_BYTE);
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_LOW_BYTE);
         
         // Send the low cursor byte.
         outb(VGA_DATA_PORT, index);

@@ -11,12 +11,15 @@ namespace MorOS
 {
     constexpr size_t VGA_WIDTH  = 80;
     constexpr size_t VGA_HEIGHT = 25;
-    constexpr uint8_t VGA_SET_CURSOR_START      = 0x0a;
-    constexpr uint8_t VGA_SET_CURSOR_HIGH_BYTE  = 0x0e;
-    constexpr uint8_t VGA_SET_CURSOR_LOW_BYTE   = 0x0f;
+    
+    constexpr uint8_t VGA_SET_CRSR_MAX_SCAN   = 0x09;
+    constexpr uint8_t VGA_SET_CRSR_START      = 0x0a;
+    constexpr uint8_t VGA_SET_CRSR_END        = 0x0b;
+    constexpr uint8_t VGA_SET_CRSR_HIGH_BYTE  = 0x0e;
+    constexpr uint8_t VGA_SET_CRSR_LOW_BYTE   = 0x0f;
 
-    constexpr uint16_t VGA_COMMAND_PORT         = 0x03d4;
-    constexpr uint16_t VGA_DATA_PORT            = 0x03d5;
+    constexpr uint16_t VGA_COMM_PORT          = 0x03d4;
+    constexpr uint16_t VGA_DATA_PORT          = 0x03d5;
 
     class Monitor
     {
@@ -34,6 +37,7 @@ namespace MorOS
 
         void clear();
         void show_cursor(bool state);
+        void set_color(uint8_t fg, uint8_t bg);
 
     private:
         void move_cursor();
