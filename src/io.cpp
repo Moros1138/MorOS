@@ -7,6 +7,11 @@ namespace MorOS
     {
         asm volatile ("outb %1, %0" : : "dN" (port), "a" (value));
     }
+    
+    void outw(uint16_t port, uint16_t value)
+    {
+        asm volatile ("outw %1, %0" : : "dN" (port), "a" (value));
+    }
 
     // read a byte from the specified port.
     uint8_t inb(uint16_t port)
