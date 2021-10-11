@@ -30,7 +30,6 @@ namespace MorOS
         // the higher the divisor the faster the interrupt
         uint32_t divisor = 1193180 / freq;
         
-        
         // Send the command byte.
         outb(0x43, 0x36);
 
@@ -46,7 +45,6 @@ namespace MorOS
     void Timer::callback(registers_t regs)
     {
         tick++;
-        printf("Pulse: %u\n", tick);
     }
 
 } // MorOS
