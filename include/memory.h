@@ -1,6 +1,7 @@
 #ifndef _MOROS_MEMORY_MANAGER_H
 #define _MOROS_MEMORY_MANAGER_H
 
+#include "multiboot.h"
 #include "types.h"
 #include "monitor.h"
 
@@ -11,6 +12,7 @@ namespace MorOS
     {
     public:
         MemoryManager();
+        MemoryManager(multiboot_info_t* mbd);
         MemoryManager(size_t address, size_t size);
         ~MemoryManager();
 
