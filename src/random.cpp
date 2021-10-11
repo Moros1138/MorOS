@@ -54,6 +54,15 @@ namespace MorOS
 		return (int)seed;
 	}
 
+    void srand(uint32_t s)
+	{
+		Random::activeRandomizer->SetSeed(s);
+	}
+    
+	int rand()
+	{
+		return Random::activeRandomizer->GetInteger();
+	}
 
 } // MorOS
 

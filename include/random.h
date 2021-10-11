@@ -25,6 +25,9 @@ namespace MorOS
         uint32_t seed;
     };
 
+    void srand(uint32_t s);
+    int rand();
+
 } // MorOS
 
 
