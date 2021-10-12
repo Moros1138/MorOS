@@ -8,29 +8,40 @@ namespace MorOS
     {
         Monitor::activeMonitor = this;
 
-        // video ram buffer
-        buffer      = (uint16_t*)0xb8000;
+        // a large amount of data is written to port 0x03d4, let's batch it all together
+        uint16_t words[] = {
+            0x0e11, // enable regs 0-7
+            0x5f00, 0x4f01, 0x5002, 0x8203, 0x5404, 0x8005, 0x2813, // horizontal registers
+            0xbf06, 0x1f07, 0x4109, 0x9c10, 0x8e11, 0x8f12, 0x9615, 0xb916, // vertical registers
+            0x0008, // vert.panning = 0
+            0x4014, 0xa317, // chain 4
+        };
         
-        // init cursor
-        outb(VGA_COMM_PORT, VGA_SET_CRSR_MAX_SCAN);   // set maximum scan line register to 15
-        outb(VGA_DATA_PORT , 15);
-
-        outb(VGA_COMM_PORT, VGA_SET_CRSR_END);   // set the cursor end line to 15
-        outb(VGA_DATA_PORT , 15);
-
-        outb(VGA_COMM_PORT, VGA_SET_CRSR_START);   // set the cursor start line to 14 and enable cursor visibility
-        outb(VGA_DATA_PORT , 14);
-
-        // initialize trackers
-        cursor_x    = 0;
-        cursor_y    = 0;
-        index       = 0;
+        // start actually changing the video mode
+        outb(0x3c2,0x63);
         
-        // default to (BG: black FG: grey)
-        attribute   = 0x07;
-        
-        // clear the screen
-        clear();
+        // write words to port 0x03d4
+        for(int a = 0; a < sizeof(words); ++a)
+            outw(0x3d4, words[a]);
+
+        outw(0x3c4,0x0e04); outw(0x3c4,0x0101); outw(0x3c4,0x0f02); // enable writing to all planes
+
+        outw(0x3ce,0x4005); // 256color mode
+        outw(0x3ce,0x0506); // graph mode & A000-AFFF
+
+        inb(0x3da);
+        outb(0x3c0,0x30); outb(0x3c0,0x41); outb(0x3c0,0x33); outb(0x3c0,0x00);
+
+        // ega pal
+        for(int a = 0; a < 16; a++)
+        {
+            outb(0x3c0,(int8_t)a); outb(0x3c0,(int8_t)a); 
+        }
+
+        // clear to black
+        memset((uint8_t*)0xA0000, 0, 64000);
+    
+        outb(0x3c0, 0x20); // enable video
     }
 
     Monitor::~Monitor()
@@ -38,33 +49,33 @@ namespace MorOS
 
     void Monitor::putc(char ch)
     {
-        if(ch == '\n')
-        {
-            cursor_x = 0;
-            cursor_y++;
-        }
-        else
-        {
-            // print the character using the current attribute
-            buffer[index] = ch | (attribute << 8);
-            cursor_x++;
-        }
+        // if(ch == '\n')
+        // {
+        //     cursor_x = 0;
+        //     cursor_y++;
+        // }
+        // else
+        // {
+        //     // print the character using the current attribute
+        //     buffer[index] = ch | (attribute << 8);
+        //     cursor_x++;
+        // }
         
-        if(cursor_x >= VGA_WIDTH)
-        {
-            cursor_x = 0;
-            cursor_y++;
-        }
+        // if(cursor_x >= VGA_WIDTH)
+        // {
+        //     cursor_x = 0;
+        //     cursor_y++;
+        // }
 
-        if(cursor_y >= VGA_HEIGHT)
-        {
-            cursor_y = VGA_HEIGHT - 1;
-            scroll();
-        }
+        // if(cursor_y >= VGA_HEIGHT)
+        // {
+        //     cursor_y = VGA_HEIGHT - 1;
+        //     scroll();
+        // }
 
-        // update index
-        index = cursor_y * VGA_WIDTH + cursor_x;
-        move_cursor();
+        // // update index
+        // index = cursor_y * VGA_WIDTH + cursor_x;
+        // move_cursor();
     }
 
     void Monitor::puts(char* str)
@@ -129,51 +140,7 @@ namespace MorOS
         puts(buf);
     }
     
-    void Monitor::clear()
-    {
-        uint16_t blank = 0x20 | (attribute << 8);
-        for(int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-            buffer[i] = blank;
-    }
     
-    void Monitor::show_cursor(bool state)
-    {
-        outb(VGA_COMM_PORT, VGA_SET_CRSR_START);
-        outb(VGA_DATA_PORT, (state) ? 0x0d : 0x2d);
-    }
-    
-    void Monitor::set_color(uint8_t fg, uint8_t bg)
-    {
-        attribute = fg | (bg << 8);
-    }
-    
-    void Monitor::move_cursor()
-    {
-        // Tell the VGA board we are setting the high cursor byte.
-        outb(VGA_COMM_PORT, VGA_SET_CRSR_HIGH_BYTE);
-
-        // Send the high cursor byte.
-        outb(VGA_DATA_PORT, index >> 8);
-        
-        // Tell the VGA board we are setting the low cursor byte.
-        outb(VGA_COMM_PORT, VGA_SET_CRSR_LOW_BYTE);
-        
-        // Send the low cursor byte.
-        outb(VGA_DATA_PORT, index);
-    }
-
-    void Monitor::scroll()
-    {
-        int i;
-        // shift text up by 1 line
-        for(i = 0 * VGA_WIDTH; i < (VGA_WIDTH * (VGA_HEIGHT-1)); i++)
-            buffer[i] = buffer[i + VGA_WIDTH];
-
-        // clear the last line
-        for (i = (VGA_HEIGHT-1)*VGA_WIDTH; i < VGA_HEIGHT*VGA_WIDTH; i++)
-           buffer[i] = 0x0720;
-    }
-
     void printf(char* fmt, ...)
     {
         va_list args;

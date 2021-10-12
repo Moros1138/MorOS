@@ -17,6 +17,7 @@ namespace MorOS
         register_interrupt_handler(IRQ0, &MorOS::Timer::callback);
         set(freq);
     }
+    
     Timer::~Timer()
     { }
     
