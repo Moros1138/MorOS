@@ -28,7 +28,26 @@ void irq_handler(registers_t regs)
     }
 }
 
+
+void irq_set_mask(uint32_t i)
+{
+    uint16_t port = i < 8 ? 0x21 : 0xA1;
+    uint8_t value = MorOS::inb(port) | (1 << i);
+
+    MorOS::outb(port, value);
+}
+
+void irq_clear_mask(uint32_t i)
+{
+    uint16_t port = i < 8 ? 0x21 : 0xA1;
+    uint8_t value = MorOS::inb(port) & ~(1 << i);
+    MorOS::outb(port, value);
+}
+
 void register_interrupt_handler(uint8_t n, isr_t handler)
 {
-  interrupt_handlers[n] = handler;
+    asm volatile("cli;");
+    interrupt_handlers[n] = handler;
+    irq_clear_mask(n);
+    asm volatile("sti;");
 }
