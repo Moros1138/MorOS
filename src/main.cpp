@@ -34,8 +34,7 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     // keyboard
     MorOS::Keyboard keyboard{};
     
-    // ~  60 fps - ~16.66ms per tick - 19886
-    // ~1000 fps - ~ 1.00ms per tick -  1193
+    // ~1000 fps - ~1.00ms per tick -  1193
     MorOS::Timer(1193);
     
     uint32_t tp1 = MorOS::Timer::tick;
