@@ -8,7 +8,38 @@ namespace MorOS
     Monitor::Monitor()
     {
         Monitor::activeMonitor = this;
+        
+        // video ram buffer
+        buffer      = (uint16_t*)0xb8000;
+        
+        // init cursor
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_MAX_SCAN);   // set maximum scan line register to 15
+        outb(VGA_DATA_PORT , 15);
 
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_END);   // set the cursor end line to 15
+        outb(VGA_DATA_PORT , 15);
+
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_START);   // set the cursor start line to 14 and enable cursor visibility
+        outb(VGA_DATA_PORT , 14);
+
+        // initialize trackers
+        cursor_x    = 0;
+        cursor_y    = 0;
+        index       = 0;
+        
+        // default to (BG: black FG: grey)
+        attribute   = 0x07;
+        
+        // clear the screen
+        clear();
+        move_cursor();
+    }
+
+    Monitor::~Monitor()
+    { }
+    
+    void Monitor::switchTo13h()
+    {
         // a large amount of data is written to port 0x03d4, let's batch it all together
         uint16_t words0x03d4[] = {
             0x0e11, // disable write protection on registers 0-7 of 0x3d4
@@ -124,38 +155,35 @@ namespace MorOS
         MorOS::memset((uint8_t*)0xA0000, 0, 64000);
     }
 
-    Monitor::~Monitor()
-    { }
-
     void Monitor::putc(char ch)
     {
-        // if(ch == '\n')
-        // {
-        //     cursor_x = 0;
-        //     cursor_y++;
-        // }
-        // else
-        // {
-        //     // print the character using the current attribute
-        //     buffer[index] = ch | (attribute << 8);
-        //     cursor_x++;
-        // }
+        if(ch == '\n')
+        {
+            cursor_x = 0;
+            cursor_y++;
+        }
+        else
+        {
+            // print the character using the current attribute
+            buffer[index] = ch | (attribute << 8);
+            cursor_x++;
+        }
         
-        // if(cursor_x >= VGA_WIDTH)
-        // {
-        //     cursor_x = 0;
-        //     cursor_y++;
-        // }
+        if(cursor_x >= VGA_WIDTH)
+        {
+            cursor_x = 0;
+            cursor_y++;
+        }
 
-        // if(cursor_y >= VGA_HEIGHT)
-        // {
-        //     cursor_y = VGA_HEIGHT - 1;
-        //     scroll();
-        // }
+        if(cursor_y >= VGA_HEIGHT)
+        {
+            cursor_y = VGA_HEIGHT - 1;
+            scroll();
+        }
 
-        // // update index
-        // index = cursor_y * VGA_WIDTH + cursor_x;
-        // move_cursor();
+        // update index
+        index = cursor_y * VGA_WIDTH + cursor_x;
+        move_cursor();
     }
 
     void Monitor::puts(char* str)
@@ -220,6 +248,50 @@ namespace MorOS
         puts(buf);
     }
     
+     void Monitor::clear()
+    {
+        uint16_t blank = 0x20 | (attribute << 8);
+        for(int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+            buffer[i] = blank;
+    }
+    
+    void Monitor::show_cursor(bool state)
+    {
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_START);
+        outb(VGA_DATA_PORT, (state) ? 0x0d : 0x2d);
+    }
+    
+    void Monitor::set_color(uint8_t fg, uint8_t bg)
+    {
+        attribute = fg | (bg << 8);
+    }
+    
+    void Monitor::move_cursor()
+    {
+        // Tell the VGA board we are setting the high cursor byte.
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_HIGH_BYTE);
+
+        // Send the high cursor byte.
+        outb(VGA_DATA_PORT, index >> 8);
+        
+        // Tell the VGA board we are setting the low cursor byte.
+        outb(VGA_COMM_PORT, VGA_SET_CRSR_LOW_BYTE);
+        
+        // Send the low cursor byte.
+        outb(VGA_DATA_PORT, index);
+    }
+
+    void Monitor::scroll()
+    {
+        int i;
+        // shift text up by 1 line
+        for(i = 0 * VGA_WIDTH; i < (VGA_WIDTH * (VGA_HEIGHT-1)); i++)
+            buffer[i] = buffer[i + VGA_WIDTH];
+
+        // clear the last line
+        for (i = (VGA_HEIGHT-1)*VGA_WIDTH; i < VGA_HEIGHT*VGA_WIDTH; i++)
+           buffer[i] = 0x0720;
+    }   
     
     void printf(char* fmt, ...)
     {
