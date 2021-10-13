@@ -81,6 +81,10 @@ void FillCircle(int32_t x, int32_t y, int32_t radius, uint8_t p)
         Draw(x, y, p);
 }
 
+void Clear(uint8_t col)
+{
+    MorOS::memset(pixels, col, 64000);
+}
 
 extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 {
@@ -90,8 +94,8 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     // interrupts
     MorOS::InterruptManager interruptManager{};
 
-    // 33.33333333ms per tick
-    MorOS::Timer(30);
+    // approximately 30 fps
+    // MorOS::Timer(65355);
 
     // memory
     MorOS::MemoryManager memoryManager(mbd);
@@ -101,31 +105,43 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 
     // monitor (VGA mode 13h)
     MorOS::Monitor monitor{};
-
-    uint32_t tp1, tp2;
+    
+    // ~  60 fps - ~16.66ms per tick - 19886
+    // ~1000 fps - ~ 1.00ms per tick -  1193
+    MorOS::Timer(1193);
+    
     // initial time points
-    tp1 = tp2 = MorOS::Timer::tick;
-    
+    uint32_t tp1 = MorOS::Timer::tick;
+    uint32_t tp2 = MorOS::Timer::tick;
+    int32_t elapsedTime;
+    int32_t timeTracker = 0;
+
     bool flag = false;
-    
+
     // just chill out forever!
     while(1)
     {
-        // tp2 = MorOS::Timer::tick;
-        // float fElapsedTime = ((float)(tp2 - tp1) * 33) / 1000;
-        // tp1 = tp2;
-
+        tp2 = MorOS::Timer::tick;
+        elapsedTime = tp2 - tp1;
+        tp1 = tp2;
+        
+        timeTracker += elapsedTime;
+        if(timeTracker < 1000)
+            continue;
+        
+        timeTracker -= 1000;
         flag = !flag;
 
-        for(int y = 0; y < ScreenHeight; y++)
-            for(int x = 0; x < ScreenWidth; x++)
-                Draw(x, y, (MorOS::rand() % 255) + 1);
+        // for(int y = 0; y < ScreenHeight; y++)
+        //     for(int x = 0; x < ScreenWidth; x++)
+        //         Draw(x, y, (MorOS::rand() % 255) + 1);
 
-        // FillRect(0, 0, ScreenWidth, ScreenHeight, 0);
-        // FillRect(5, 5, ScreenWidth-10, ScreenHeight-10, 4);
-        // FillRect(10, 10, ScreenWidth-20, ScreenHeight-20, 3);
-        // FillCircle(ScreenWidth / 2, ScreenHeight / 2, 50, (flag) ? 4 : 14);
-
+        
+        Clear(0);
+        FillRect(5, 5, ScreenWidth-10, ScreenHeight-10, 4);
+        FillRect(10, 10, ScreenWidth-20, ScreenHeight-20, 3);
+        FillCircle(ScreenWidth / 2, ScreenHeight / 2, 50, (flag) ? 4 : 14);
+        
         MorOS::memcpy((uint8_t*)0xA0000, pixels, ScreenWidth * ScreenHeight);
     }
 }

@@ -119,6 +119,9 @@ namespace MorOS
 
         // enable interrupts
         asm("sti;");
+        
+        // clear the screen
+        MorOS::memset((uint8_t*)0xA0000, 0, 64000);
     }
 
     Monitor::~Monitor()

@@ -31,16 +31,15 @@ namespace MorOS
         // the higher the divisor the faster the interrupt
         uint32_t divisor = 1193180 / freq;
         
+        if(divisor >= 0x10000)
+            divisor = 0xffff;
+        
         // Send the command byte.
         outb(0x43, 0x36);
 
-        // Divisor has to be sent byte-wise, so split here into upper/lower bytes.
-        uint8_t l = (uint8_t)(divisor & 0xFF);
-        uint8_t h = (uint8_t)( (divisor>>8) & 0xFF );
-
         // Send the frequency divisor.
-        outb(0x40, l);
-        outb(0x40, h);
+        outb(0x40, (uint8_t)(divisor & 0xFF));
+        outb(0x40, (uint8_t)((divisor>>8) & 0xFF));
     }
 
     void Timer::callback(registers_t regs)
