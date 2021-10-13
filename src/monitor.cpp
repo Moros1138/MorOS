@@ -1,4 +1,5 @@
 #include "monitor.h"
+#include "timer.h"
 
 namespace MorOS
 {
@@ -9,39 +10,115 @@ namespace MorOS
         Monitor::activeMonitor = this;
 
         // a large amount of data is written to port 0x03d4, let's batch it all together
-        uint16_t words[] = {
-            0x0e11, // enable regs 0-7
+        uint16_t words0x03d4[] = {
+            0x0e11, // disable write protection on registers 0-7 of 0x3d4
             0x5f00, 0x4f01, 0x5002, 0x8203, 0x5404, 0x8005, 0x2813, // horizontal registers
             0xbf06, 0x1f07, 0x4109, 0x9c10, 0x8e11, 0x8f12, 0x9615, 0xb916, // vertical registers
             0x0008, // vert.panning = 0
             0x4014, 0xa317, // chain 4
         };
+
+        uint16_t words0x03c4[] = {
+            0x0e04, // Set Memory Mode
+            0x0101, // Set Clock Mode
+            0x0f02  // Map Mask Register -> enable writing to all planes
+        };
         
-        // start actually changing the video mode
+        // disable interrupts
+        asm("cli;");
+
+        // MISCELLANEOUS OUTPUT REGISTER (0x03c2)
+        // 
+        //  /--------------------- VSYNC Polarity, 0 = positive retrace sync pulse
+        //  | 
+        //  | /------------------- HSYNC Polarity, 1 = negative retrace sync pulse
+        //  | |
+        //  | | /----------------- Odd/Even Page Select, 1 selects the high page
+        //  | | |
+        //  | | |   /--+---------- Clock Select 00 = select 25 Mhz clock
+        //  | | |   | /            25 Mhz is used for 320/640 pixel wide modes.
+        //  | | |   | | 
+        //  | | |   | | /--------- RAM Enable, 1 = enable address decode for the
+        //  | | |   | | |          display buffer system.
+        //  | | |   | | |         
+        //  | | |   | | | /------- I/O Address Select, 1 = compatible with color
+        //  | | | x | | | |        graphics adapters.
+        //  | | | | | | | |
+        //  0 1 1 0 0 0 1 1 --> 0x63
         outb(0x3c2,0x63);
         
         // write words to port 0x03d4
-        for(int a = 0; a < sizeof(words); ++a)
-            outw(0x3d4, words[a]);
+        for(int a = 0; a < sizeof(words0x03d4); ++a)
+            outw(0x3d4, words0x03d4[a]);
+        
+        // write words to port 0x03c4
+        for(int a = 0; a < sizeof(words0x03c4); ++a)
+            outw(0x03c4, words0x03c4[a]);
+        
 
-        outw(0x3c4,0x0e04); outw(0x3c4,0x0101); outw(0x3c4,0x0f02); // enable writing to all planes
+        // GRAPHICS MODE REGISTER (0x03ce) index 0x05
+        // 
+        //    /------------------- 256-Color Shift Mode, 1 = enable 256 color mode
+        //    |  
+        //    | /----------------- Shift Register Interleave Mode
+        //    | |  
+        //    | | /--------------- Host Odd/Even Memory Read Addressing Enable
+        //    | | |                
+        //    | | | /------------- Read Mode, 0b = use REad Mode 0
+        //    | | | |              
+        //    | | | |   /--+------ Write Mode, 00b = use Write Mode 0
+        //  x | | | | x | /
+        //  | | | | | | | |
+        //  0 1 0 0 0 0 0 0 -> 0x40
+        outw(0x3ce,0x4005);
 
-        outw(0x3ce,0x4005); // 256color mode
-        outw(0x3ce,0x0506); // graph mode & A000-AFFF
+        // MISCELLANEOUS GRAPHICS REGISTER (0x03ce) index 0x06
+        // 
+        //          /---------+--- Memory Map Select
+        //          |         |
+        //          | /-------/    01b = A0000h-AFFFFh (64K region)
+        //          | | 
+        //          | | /--------- Chain Odd/Even Enable
+        //          | | |         
+        //  x x x x | | | /------- Alphanumeric Mode Disable, 1 = graphics mode
+        //  | | | | | | | |
+        //  0 0 0 0 0 1 0 1 -> 0x05
+        outw(0x3ce,0x0506);
 
+        // Reading from port 0x03da puts port 0x03c0 into indexing mode.
         inb(0x3da);
-        outb(0x3c0,0x30); outb(0x3c0,0x41); outb(0x3c0,0x33); outb(0x3c0,0x00);
+
+        // index = 0x30  --  data = 0x41
+        outb(0x3c0,0x30); outb(0x3c0,0x41);
+        
+        // index = 0x33  --  data = 0x00
+        outb(0x3c0,0x33); outb(0x3c0,0x00);
 
         // ega pal
         for(int a = 0; a < 16; a++)
         {
+            // index = a          --  data = a
             outb(0x3c0,(int8_t)a); outb(0x3c0,(int8_t)a); 
         }
 
-        // clear to black
-        memset((uint8_t*)0xA0000, 0, 64000);
-    
+        // configure palette with 8-bit RRRGGGBB color
+        outb(0x3C6, 0xFF);
+        outb(0x3C8, 0);
+        for (uint8_t i = 0; i < 255; i++) {
+            outb(0x3C9, (((i >> 5) & 0x7) * (256 / 8)) / 4);
+            outb(0x3C9, (((i >> 2) & 0x7) * (256 / 8)) / 4);
+            outb(0x3C9, (((i >> 0) & 0x3) * (256 / 4)) / 4);
+        }
+
+        // set color 255 = white
+        outb(0x3C9, 0x3F);
+        outb(0x3C9, 0x3F);
+        outb(0x3C9, 0x3F);
+
         outb(0x3c0, 0x20); // enable video
+
+        // enable interrupts
+        asm("sti;");
     }
 
     Monitor::~Monitor()
