@@ -28,6 +28,7 @@ KERNEL_OBJS	:=\
 	$(OBJ)/io.o \
 	$(OBJ)/monitor.o \
 	$(OBJ)/timer.o \
+	$(OBJ)/keyboard.o \
 	$(OBJ)/memory.o \
 	$(OBJ)/random.o \
 	$(OBJ)/main.o
