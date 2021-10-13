@@ -1,4 +1,20 @@
-# Octover 10, 2021 (Sunday) - Day 11
+# October 13, 2021 (Wednesday) - Day 14
+TWO WEEKS!! And I got to my first keyboard!
+
+So, a few things I've done since I last made an entry... In my quest for VGA 13h mode. I learned that I had failed to implement a 16-bit port writing. Got that out of the way and then I turned to some very interesting documentation to get me into a screen that I could make graphics on!
+
+Found a function that did [all the heavy lifting here](http://bos.asmhackers.net/docs/vga_without_bios/docs/mode%2013h%20without%20using%20bios.htm). But because I wasn't planning to support multiple mode changes, I felt like it would be ok to simply refactor the code down to exactly what was required for me to switch to 13h without BIOS interrupts (which as you know by now, I lack in protected mode).
+
+Anyways, after I refactored it down to exactly what I needed for 320x200 in 256 colors, I decided that simply copying someone else's code wasn't really helping me learn anything useful. So I spent most of the last couple days reading through [VGA Hardware](https://wiki.osdev.org/VGA_Hardware) on the OS Dev Wiki, as well as the resources at [FreeVGA on OSDever](http://www.osdever.net/FreeVGA/vga/vga.htm). If you need to do stuff with VGA... These are excellent places to start!
+
+I also took some time to tweak the timer. I decided that I wanted to have 1 tick for every millisecond (ish) .. this makes it super easy to calculate timing later on when I start porting PGE.
+
+Oh, did I mention I got my keyboard working? It is definitely **NOT** a fully implemented keyboard driver at this point. But I'm getting closer and closer to bringing PGE over. Getting excited!
+
+
+
+
+# October 10, 2021 (Sunday) - Day 11
 I feel like I've accomplished alot today! I have implemented and refactored the GDT and IDT. Implemented ISR and IRQ and have a working timer! Now I'm going to move on to getting user input from the keyboard and mouse! Wish me luck!
 
 
