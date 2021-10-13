@@ -1,4 +1,4 @@
-#include "gdt.h"
+#include "descriptors/gdt.h"
 
 namespace MorOS
 {

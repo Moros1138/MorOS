@@ -1,4 +1,4 @@
-#include "idt.h"
+#include "descriptors/idt.h"
 
 namespace MorOS
 {

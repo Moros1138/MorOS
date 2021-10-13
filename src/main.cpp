@@ -1,11 +1,12 @@
 #include "multiboot.h"
 
 #include "types.h"
-#include "monitor.h"
-#include "gdt.h"
-#include "idt.h"
-#include "timer.h"
-#include "keyboard.h"
+
+#include "descriptors/gdt.h"
+#include "descriptors/idt.h"
+#include "hardware/monitor.h"
+#include "hardware/timer.h"
+#include "hardware/keyboard.h"
 #include "memory.h"
 #include "random.h"
 

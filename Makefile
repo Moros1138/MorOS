@@ -22,13 +22,13 @@ LDFLAGS	:=
 # kernel object files
 KERNEL_OBJS	:=\
 	$(OBJ)/loader.o \
-	$(OBJ)/gdt.o \
-	$(OBJ)/idt.o \
+	$(OBJ)/descriptors/gdt.o \
+	$(OBJ)/descriptors/idt.o \
 	$(OBJ)/isr.o \
 	$(OBJ)/io.o \
-	$(OBJ)/monitor.o \
-	$(OBJ)/timer.o \
-	$(OBJ)/keyboard.o \
+	$(OBJ)/hardware/monitor.o \
+	$(OBJ)/hardware/timer.o \
+	$(OBJ)/hardware/keyboard.o \
 	$(OBJ)/memory.o \
 	$(OBJ)/random.o \
 	$(OBJ)/main.o
@@ -38,8 +38,7 @@ all: dirs img
 
 # create directories if they don't exist
 dirs:
-	mkdir -p $(BIN)
-	mkdir -p $(OBJ)
+	mkdir -p $(BIN) $(OBJ)/hardware $(OBJ)/descriptors
 
 # assemble!
 $(OBJ)/%.o: $(SRC)/%.asm
@@ -77,4 +76,4 @@ run-img: dirs img
 	qemu-system-i386 -cdrom $(BIN)/MorOS.iso
 
 clean:
-	rm -f $(BIN)/MorOS.iso $(BIN)/MorOS.kernel $(OBJ)/*.o
+	rm -f $(BIN)/MorOS.iso $(BIN)/MorOS.kernel $(KERNEL_OBJS)

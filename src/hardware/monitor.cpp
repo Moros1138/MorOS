@@ -1,5 +1,5 @@
-#include "monitor.h"
-#include "timer.h"
+#include "hardware/monitor.h"
+#include "hardware/timer.h"
 
 namespace MorOS
 {

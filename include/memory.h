@@ -3,7 +3,7 @@
 
 #include "multiboot.h"
 #include "types.h"
-#include "monitor.h"
+#include "hardware/monitor.h"
 
 namespace MorOS
 {

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "isr.h"
 #include "io.h"
-#include "monitor.h"
+#include "hardware/monitor.h"
 
 namespace MorOS
 {
