@@ -29,6 +29,7 @@ KERNEL_OBJS	:=\
 	$(OBJ)/hardware/monitor.o \
 	$(OBJ)/hardware/timer.o \
 	$(OBJ)/hardware/keyboard.o \
+	$(OBJ)/hardware/mouse.o \
 	$(OBJ)/memory.o \
 	$(OBJ)/random.o \
 	$(OBJ)/main.o
