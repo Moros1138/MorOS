@@ -74,6 +74,16 @@ namespace MorOS
             
     }
 
+    int32_t Monitor::Width()
+    {
+        return (mode == Monitor::Mode::Text) ? 80 : 320;
+    }
+
+    int32_t Monitor::Height()
+    {
+        return (mode == Monitor::Mode::Text) ? 25 : 200;
+    }
+
     void Monitor::switchTo13h()
     {
         // a large amount of data is written to port 0x03d4, let's batch it all together
