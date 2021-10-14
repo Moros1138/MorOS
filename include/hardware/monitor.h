@@ -10,18 +10,6 @@
 namespace MorOS
 {
 
-    constexpr size_t VGA_WIDTH  = 80;
-    constexpr size_t VGA_HEIGHT = 25;
-    
-    constexpr uint8_t VGA_SET_CRSR_MAX_SCAN   = 0x09;
-    constexpr uint8_t VGA_SET_CRSR_START      = 0x0a;
-    constexpr uint8_t VGA_SET_CRSR_END        = 0x0b;
-    constexpr uint8_t VGA_SET_CRSR_HIGH_BYTE  = 0x0e;
-    constexpr uint8_t VGA_SET_CRSR_LOW_BYTE   = 0x0f;
-
-    constexpr uint16_t VGA_COMM_PORT          = 0x03d4;
-    constexpr uint16_t VGA_DATA_PORT          = 0x03d5;
-
     class Monitor
     {
     public:
@@ -30,9 +18,21 @@ namespace MorOS
 
         static Monitor* activeMonitor;
     
-    public:
-        void switchTo13h();
+    enum class Mode
+    {
+        Text,
+        Graphics
+    };
+
+    public: // MODE SWITCHING
+        void SetMode(Monitor::Mode m);
+        void Swap();
         
+    public: // STUFF
+        int32_t Width();
+        int32_t Height();
+    
+    public: // TEXT MODE FUNCTIONS        
         void putc(char ch);
         void puts(char* str);
         void putdec(uint32_t num, bool bSigned = false);
@@ -41,15 +41,19 @@ namespace MorOS
         void clear();
         void show_cursor(bool state);
         void set_color(uint8_t fg, uint8_t bg);
+    
+    public: // GRAPHICS MODE FUNCTIONS
+        void switchTo13h();
 
     private:
         void move_cursor();
         void scroll();
         
-    private:
-        // video ram buffer
-        uint16_t*   buffer;
+    private: // Text Mode Internal Tracking
         
+        // video ram buffer
+        uint16_t    pTextBuffer[2000];
+
         // cursor and position tracking
         uint16_t    cursor_x;
         uint16_t    cursor_y;
@@ -57,6 +61,16 @@ namespace MorOS
 
         // current attribute
         uint8_t     attribute;
+
+    private: // Graphics Mode Internal Tracking
+        uint8_t     pGraphicsBufffer[64000];
+        
+    private: // Common Internal Tracking
+        // current screen size
+        int32_t     width;
+        int32_t     height;
+
+        Monitor::Mode mode;
     };
 
     void printf(char* fmt, ...);
