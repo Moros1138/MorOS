@@ -49,7 +49,7 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
         tp1 = tp2;
         
         printf("\n--- %d timer ticks between frames---\n", ticks);
-        for(int i = 0; i < 1000000000; i++)
+        for(int i = 0; i < 500000000; i++)
             asm("nop;");
     }
 }
