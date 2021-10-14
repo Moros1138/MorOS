@@ -7,6 +7,7 @@
 #include "hardware/monitor.h"
 #include "hardware/timer.h"
 #include "hardware/keyboard.h"
+#include "hardware/mouse.h"
 #include "memory.h"
 #include "random.h"
 
@@ -34,6 +35,9 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 
     // keyboard
     MorOS::Keyboard keyboard{};
+    
+    // mouse
+    MorOS::Mouse mouse{};
     
     // ~1000 fps - ~1.00ms per tick -  1193
     MorOS::Timer(1193);
