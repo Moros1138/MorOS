@@ -14,7 +14,7 @@ OBJ		:=	obj
 SRC		:=	src
 
 # compiler flags
-CFLAGS	:=	-I$(INC) -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
+CFLAGS	:=	-I$(INC) -Wall -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
 
 # linker flags
 LDFLAGS	:=	
