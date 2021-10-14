@@ -26,8 +26,8 @@ namespace MorOS
     void* malloc(size_t size);
     void free(void* mem);
     
-    void memcpy(void* dest, void* src, uint32_t len);
-    void memset(void* dest, uint8_t val, uint32_t len);
+    void memcpy(void* dest, void* src, size_t len);
+    void memset(void* dest, uint8_t val, size_t len);
 
 
 } // MorOS
