@@ -44,8 +44,7 @@ namespace MorOS
 
     void Timer::callback(registers_t regs)
     {
-        if((tick++ % 16) == 0)
-            Monitor::activeMonitor->Swap();
+        tick++;
     }
 
 } // MorOS
