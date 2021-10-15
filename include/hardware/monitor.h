@@ -31,7 +31,7 @@ namespace MorOS
     public: // STUFF
         int32_t Width();
         int32_t Height();
-    
+
     public: // TEXT MODE FUNCTIONS        
         void putc(char ch);
         void puts(char* str);
@@ -44,6 +44,7 @@ namespace MorOS
     
     public: // GRAPHICS MODE FUNCTIONS
         void switchTo13h();
+        uint8_t* GetBuffer();
 
     private:
         void move_cursor();

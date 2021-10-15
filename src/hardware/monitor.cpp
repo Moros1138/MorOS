@@ -58,6 +58,7 @@ namespace MorOS
         {
             width = 320;
             height = 200;
+            switchTo13h();
         }
     }
 
@@ -199,6 +200,11 @@ namespace MorOS
         
         // clear the screen
         MorOS::memset((uint8_t*)0xA0000, 0, 64000);
+    }
+
+    uint8_t* Monitor::GetBuffer()
+    {
+        return pGraphicsBufffer;
     }
 
     void Monitor::putc(char ch)
