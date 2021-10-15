@@ -27,6 +27,9 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     // monitor (VGA mode 13h)
     MorOS::Monitor monitor{};
 
+    // ~1000 fps - ~1.00ms per tick -  1193
+    MorOS::Timer(1193);
+
     // memory
     MorOS::MemoryManager memoryManager(mbd);
 
@@ -38,22 +41,12 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     
     // mouse
     MorOS::Mouse mouse{};
-    
-    // ~1000 fps - ~1.00ms per tick -  1193
-    MorOS::Timer(1193);
-    
-    uint32_t tp1 = MorOS::Timer::tick;
-    uint32_t tp2 = MorOS::Timer::tick;
 
     // just chill out forever!
     while(1)
     {
-        tp2 = MorOS::Timer::tick;
-        int32_t ticks = tp2 - tp1;
-        tp1 = tp2;
-        
-        printf("\n--- %d timer ticks between frames---\n", ticks);
-        for(int i = 0; i < 500000000; i++)
-            asm("nop;");
+        printf("Left(%d) Middle(%d) Right(%d) ### %d %d\n", \
+            mouse.GetButton(0), mouse.GetButton(2), mouse.GetButton(1), \
+            mouse.GetMouseX(), mouse.GetMouseY());
     }
 }
