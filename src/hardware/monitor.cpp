@@ -241,59 +241,6 @@ namespace MorOS
         }
     }
     
-    void Monitor::putdec(uint32_t num, bool bSigned)
-    {
-        if(num == 0)
-        {
-            puts("0");
-            return;
-        }
-        
-        // buffers are large enough to hold a signed int32_t
-        char buf[12] = { 0 };
-        char buf2[12] = { 0 };
-        
-        uint32_t acc = num;
-
-        int i = 0;
-
-        while(acc > 0)
-        {
-            buf[i] = '0' + acc % 10;
-            acc /= 10; i++;
-        }
-        
-        buf[i] = 0;
-        
-        int j = 0;
-        while(i >= 0)
-        {
-            buf2[j++] = buf[--i];
-        }
-
-        puts(buf2);
-    }
-    
-    void Monitor::puthex(uint32_t num)
-    {
-        if(num == 0)
-        {
-            puts("00000000");
-            return;
-        }
-
-        char buf[9] = { 0 };
-
-        int index = 0;
-        for(int i = 28; i >= 0; i -= 4)
-        {
-            uint8_t temp = (num >> i) & 0x0f;
-            buf[index++] = (temp > 9) ? temp + 'a' - 10 : temp + '0';
-        }
-        
-        puts(buf);
-    }
-    
     void Monitor::clear()
     {
         if(mode == Monitor::Mode::Text)
@@ -348,25 +295,109 @@ namespace MorOS
         va_list args;
         va_start(args, fmt);
 
-        #define process_fmt(p, c, func, t) if(fmt[p+1] == c) { t value = va_arg(args, t); Monitor::activeMonitor->func(value); p += 2; continue; }
-        
         size_t pos = 0;
+        
+        char buf1[32];
+        char buf2[32];
 
         while(fmt[pos] != 0)
         {
+            // zero out the buffers before we use them
+            memset(buf1, 0, 32);
+            memset(buf2, 0, 32);
+
             if(fmt[pos] == '%')
             {
-                process_fmt(pos, 'c', putc, int);
-                process_fmt(pos, 'd', putdec, uint32_t);
-                process_fmt(pos, 'u', putdec, uint32_t);
-                process_fmt(pos, 'x', puthex, uint32_t);
+                // handle "%c"
+                if(fmt[pos+1] == 'c')
+                {
+                    int value = va_arg(args, int);
+                    Monitor::activeMonitor->putc(value);
+                    pos += 2;
+                    continue;
+                }
+
+                // handle "%d" or "%u"
+                if(fmt[pos+1] == 'd' || fmt[pos+1] == 'u')
+                {
+                    bool is_signed = (fmt[pos+1] == 'd') ? true : false;
+                    uint32_t value = va_arg(args, uint32_t);
+
+                    if(value == 0)
+                    {
+                        Monitor::activeMonitor->puts("0");
+                        pos += 2;
+                        continue;
+                    }
+
+                    // buffer indexes
+                    size_t i = 0;
+                    size_t j = 0;
+
+                    uint32_t acc = value;
+
+                    // if we have a signed, negative value, invert it
+                    if(is_signed && (int32_t)value < 0)
+                        acc = (uint32_t)(-((int32_t)value));
+
+                    // convert each digit to an ascii char of the appropriate value
+                    while(acc > 0)
+                    {
+                        buf1[i++] = '0' + (acc % 10);
+                        acc /= 10;
+                    }
+                    
+                    // if we have a signed, negative value, add minus sign
+                    if(is_signed && (int32_t)value < 0)
+                        buf1[i++] = '-';
+
+                    // null terminated string!
+                    buf1[i] = 0;
+
+                    // reverse the buffer
+                    while(i > 0)
+                    {
+                        buf2[j++] = buf1[--i];
+                    }
+                    
+                    // output value to screen
+                    Monitor::activeMonitor->puts(buf2);
+
+                    pos += 2;
+                    continue;
+                }
+
+                // handle "%x"
+                if(fmt[pos+1] == 'x')
+                {
+                    uint32_t value = va_arg(args, uint32_t);
+                    
+                    // stop here if we're dealing with a 0
+                    if(value == 0)
+                    {
+                        Monitor::activeMonitor->puts("00000000");
+                        pos += 2;
+                        continue;
+                    }
+
+                    int index = 0;
+                    for(int i = 28; i >= 0; i -= 4)
+                    {
+                        uint8_t temp = (value >> i) & 0x0f;
+                        buf1[index++] = (temp > 9) ? temp + 'a' - 10 : temp + '0';
+                    }
+                    
+                    Monitor::activeMonitor->puts(buf1);
+                    
+                    pos += 2;
+                    continue;
+                }
+                
             }
             
             Monitor::activeMonitor->putc(fmt[pos++]);
         }
         
-        #undef process_fmt
-
         va_end(args);
     }
 
