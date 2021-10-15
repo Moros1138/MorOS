@@ -302,12 +302,12 @@ namespace MorOS
 
         while(fmt[pos] != 0)
         {
-            // zero out the buffers before we use them
-            memset(buf1, 0, 32);
-            memset(buf2, 0, 32);
-
             if(fmt[pos] == '%')
             {
+                // zero out the buffers before we use them
+                memset(buf1, 0, 32);
+                memset(buf2, 0, 32);
+
                 // handle "%c"
                 if(fmt[pos+1] == 'c')
                 {
