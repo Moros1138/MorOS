@@ -72,6 +72,10 @@ namespace MorOS
         int32_t     height;
 
         Monitor::Mode mode;
+        
+        // detect vertical retrace
+        uint8_t retrace;
+        uint8_t prevRetrace;
     };
 
     void printf(char* fmt, ...);

@@ -5,6 +5,35 @@ namespace MorOS
 {
     Monitor* Monitor::activeMonitor = 0;
 
+    // Attribute Controller Registers
+    constexpr uint16_t VGA_AC_INDEX         = 0x03c0;
+    constexpr uint16_t VGA_AC_READ          = 0x03c1;
+    constexpr uint16_t VGA_AC_WRITE         = 0x03c0;
+
+    // Miscellaneous Output
+    constexpr uint16_t VGA_MISC_READ        = 0x03cc;
+    constexpr uint16_t VGA_MISC_WRITE       = 0x03c2;
+
+    // Sequencer Registers
+    constexpr uint16_t VGA_SEQ_INDEX        = 0x03C4;
+    constexpr uint16_t VGA_SEQ_DATA         = 0x03C5;
+
+    // VGA Color Palette Registers
+    constexpr uint16_t VGA_DAC_READ_INDEX   = 0x03C7;
+    constexpr uint16_t VGA_DAC_WRITE_INDEX  = 0x03C8;
+    constexpr uint16_t VGA_DAC_DATA         = 0x03C9;
+
+    // Graphics Controller Registers
+    constexpr uint16_t VGA_GC_INDEX         = 0x03CE;
+    constexpr uint16_t VGA_GC_DATA          = 0x03CF;
+
+    // CRT Controller Registers
+    constexpr uint16_t VGA_CRTC_INDEX       = 0x03D4;
+    constexpr uint16_t VGA_CRTC_DATA        = 0x03D5;
+
+    // General Control and Status Registers
+    constexpr uint16_t VGA_INSTAT_READ      = 0x03DA;
+
     Monitor::Monitor()
     {
         Monitor::activeMonitor = this;
@@ -16,12 +45,12 @@ namespace MorOS
         memset(pGraphicsBufffer, 0, 64000);
 
         // set maximum scan line register to 15
-        outb(0x03d4, 0x09); outb(0x03d5, 15);
+        outb(VGA_CRTC_INDEX, 0x09); outb(VGA_CRTC_DATA, 15);
         
         // set the cursor end line to 15
-        outb(0x03d4, 0x0b); outb(0x03d5, 15);
+        outb(VGA_CRTC_INDEX, 0x0b); outb(VGA_CRTC_DATA, 15);
         // set the cursor start line to 14 and enable cursor visibility
-        outb(0x03d4, 0x0a); outb(0x03d5, 14);
+        outb(VGA_CRTC_INDEX, 0x0a); outb(VGA_CRTC_DATA, 14);
 
         // initialize trackers
         cursor_x    = 0;
@@ -38,6 +67,9 @@ namespace MorOS
         clear();
         move_cursor();
         
+        retrace = 0;
+        prevRetrace = 0;
+
         // swap the buffer to the screen
         Swap();
     }
@@ -87,119 +119,46 @@ namespace MorOS
 
     void Monitor::switchTo13h()
     {
-        // a large amount of data is written to port 0x03d4, let's batch it all together
-        uint16_t words0x03d4[] = {
-            0x0e11, // disable write protection on registers 0-7 of 0x3d4
-            0x5f00, 0x4f01, 0x5002, 0x8203, 0x5404, 0x8005, 0x2813, // horizontal registers
-            0xbf06, 0x1f07, 0x4109, 0x9c10, 0x8e11, 0x8f12, 0x9615, 0xb916, // vertical registers
-            0x0008, // vert.panning = 0
-            0x4014, 0xa317, // chain 4
-        };
+        uint8_t seq_data[5]     = { 0x03, 0x01, 0x0F, 0x00, 0x0E };
+        uint8_t crtc_data[25]   = { 0x5F, 0x4F, 0x50, 0x82,  0x54, 0x80, 0xBF, 0x1F, 0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9C, 0x0E, 0x8F, 0x28, 0x40, 0x96, 0xB9, 0xA3, 0xFF };
+        uint8_t gc_data[9]      = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0F, 0xFF };
+        uint8_t ac_data[21]     = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x41, 0x00, 0x0F, 0x00, 0x00 };
 
-        uint16_t words0x03c4[] = {
-            0x0e04, // Set Memory Mode
-            0x0101, // Set Clock Mode
-            0x0f02  // Map Mask Register -> enable writing to all planes
-        };
-        
-        // disable interrupts
-        asm("cli;");
+        // set misc register
+        outb(VGA_MISC_WRITE, 0x63);
 
-        // MISCELLANEOUS OUTPUT REGISTER (0x03c2)
-        // 
-        //  /--------------------- VSYNC Polarity, 0 = positive retrace sync pulse
-        //  | 
-        //  | /------------------- HSYNC Polarity, 1 = negative retrace sync pulse
-        //  | |
-        //  | | /----------------- Odd/Even Page Select, 1 selects the high page
-        //  | | |
-        //  | | |   /--+---------- Clock Select 00 = select 25 Mhz clock
-        //  | | |   | /            25 Mhz is used for 320/640 pixel wide modes.
-        //  | | |   | | 
-        //  | | |   | | /--------- RAM Enable, 1 = enable address decode for the
-        //  | | |   | | |          display buffer system.
-        //  | | |   | | |         
-        //  | | |   | | | /------- I/O Address Select, 1 = compatible with color
-        //  | | | x | | | |        graphics adapters.
-        //  | | | | | | | |
-        //  0 1 1 0 0 0 1 1 --> 0x63
-        outb(0x3c2,0x63);
-        
-        // write words to port 0x03d4
-        for(size_t a = 0; a < sizeof(words0x03d4); ++a)
-            outw(0x3d4, words0x03d4[a]);
-        
-        // write words to port 0x03c4
-        for(size_t a = 0; a < sizeof(words0x03c4); ++a)
-            outw(0x03c4, words0x03c4[a]);
-        
-
-        // GRAPHICS MODE REGISTER (0x03ce) index 0x05
-        // 
-        //    /------------------- 256-Color Shift Mode, 1 = enable 256 color mode
-        //    |  
-        //    | /----------------- Shift Register Interleave Mode
-        //    | |  
-        //    | | /--------------- Host Odd/Even Memory Read Addressing Enable
-        //    | | |                
-        //    | | | /------------- Read Mode, 0b = use REad Mode 0
-        //    | | | |              
-        //    | | | |   /--+------ Write Mode, 00b = use Write Mode 0
-        //  x | | | | x | /
-        //  | | | | | | | |
-        //  0 1 0 0 0 0 0 0 -> 0x40
-        outw(0x3ce,0x4005);
-
-        // MISCELLANEOUS GRAPHICS REGISTER (0x03ce) index 0x06
-        // 
-        //          /---------+--- Memory Map Select
-        //          |         |
-        //          | /-------/    01b = A0000h-AFFFFh (64K region)
-        //          | | 
-        //          | | /--------- Chain Odd/Even Enable
-        //          | | |         
-        //  x x x x | | | /------- Alphanumeric Mode Disable, 1 = graphics mode
-        //  | | | | | | | |
-        //  0 0 0 0 0 1 0 1 -> 0x05
-        outw(0x3ce,0x0506);
-
-        // Reading from port 0x03da puts port 0x03c0 into indexing mode.
-        inb(0x3da);
-
-        // index = 0x30  --  data = 0x41
-        outb(0x3c0,0x30); outb(0x3c0,0x41);
-        
-        // index = 0x33  --  data = 0x00
-        outb(0x3c0,0x33); outb(0x3c0,0x00);
-
-        // ega pal
-        for(int a = 0; a < 16; a++)
+        // set sequence data
+        for(uint8_t index = 0; index < 5; index++)
         {
-            // index = a          --  data = a
-            outb(0x3c0,(int8_t)a); outb(0x3c0,(int8_t)a); 
+            // select index
+            outb(VGA_SEQ_INDEX, index);
+            // write data at that index
+            outb(VGA_SEQ_DATA, seq_data[index]);
         }
 
-        // configure palette with 8-bit RRRGGGBB color
-        outb(0x3C6, 0xFF);
-        outb(0x3C8, 0);
-        for (uint8_t i = 0; i < 255; i++) {
-            outb(0x3C9, (((i >> 5) & 0x7) * (256 / 8)) / 4);
-            outb(0x3C9, (((i >> 2) & 0x7) * (256 / 8)) / 4);
-            outb(0x3C9, (((i >> 0) & 0x3) * (256 / 4)) / 4);
+        // write crtc data
+        for(uint8_t index = 0; index < 25; index++)
+        {
+            outb(VGA_CRTC_INDEX, index);
+            outb(VGA_CRTC_DATA, crtc_data[index]);
+        }        
+  
+        // write graphics controller data
+        for(uint8_t index = 0; index < 9; index++)
+        {
+            outb(VGA_GC_INDEX, index);
+            outb(VGA_GC_DATA, gc_data[index]);
         }
 
-        // set color 255 = white
-        outb(0x3C9, 0x3F);
-        outb(0x3C9, 0x3F);
-        outb(0x3C9, 0x3F);
-
-        outb(0x3c0, 0x20); // enable video
-
-        // enable interrupts
-        asm("sti;");
+        // write ac data
+        for(uint8_t index = 0; index < 21; index++)
+        {
+            outb(VGA_AC_INDEX, index);
+            outb(VGA_AC_WRITE, ac_data[index]);
+        }
         
-        // clear the screen
-        MorOS::memset((uint8_t*)0xA0000, 0, 64000);
+        uint8_t d = inb(VGA_INSTAT_READ);
+        outb(VGA_AC_INDEX, d | 0x20);
     }
 
     uint8_t* Monitor::GetBuffer()
@@ -263,8 +222,16 @@ namespace MorOS
     
     void Monitor::show_cursor(bool state)
     {
-        outb(0x03d4, 0x0a);
-        outb(0x03d5, (state) ? 0x0d : 0x2d);
+        // read cursor start register
+        outb(VGA_CRTC_INDEX, 0x0a);
+        uint8_t d = inb(VGA_CRTC_DATA);
+
+        // update cursor disable bit
+        outb(VGA_CRTC_INDEX, 0x0a);
+        if(state)
+            outb(VGA_CRTC_DATA, d | 0x20);
+        else
+            outb(VGA_CRTC_DATA, d & 0xdf);
     }
     
     void Monitor::set_color(uint8_t fg, uint8_t bg)
