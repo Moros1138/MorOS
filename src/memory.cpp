@@ -73,15 +73,20 @@ namespace MorOS
     // copy len bytes from src to dest.
     void memcpy(void *dest, void* src, size_t len)
     {
+        uint8_t* pTempDest = (uint8_t*)dest;
+        uint8_t* pTempSrc = (uint8_t*)src;
+
         for(size_t i; i < len; i++)
-            ((uint8_t*)dest)[i] = ((uint8_t*)src)[i];
+            pTempDest[i] = pTempSrc[i];
     }
 
     // write len copies of val into dest.
     void memset(void* dest, uint8_t val, size_t len)
     {
+        uint8_t* pTempDest = (uint8_t*)dest;
+        
         for(size_t i = 0; i < len; i++)
-            ((uint8_t*)dest)[i] = val;
+            pTempDest[i] = val;
     }
 
 } // MorOS
