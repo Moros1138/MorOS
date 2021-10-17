@@ -1,3 +1,12 @@
+# October 17, 2021 (Sunday) - Day 18
+So I wanted to really really learn more about what was actually happening with the VGA. I found some more examples and started to get a much better idea of what was going on.
+
+Anyways, I've also detected vertical retrace, which allows me to swap buffers in a much cleaner way. Got a working(ish) mouse. It's a little awkward in the way it moves and I'm not sure yet why that is, but I'll work on that later.
+
+Next on my agenda is tackling the keyboard, add a few more features to that.
+
+
+
 # October 13, 2021 (Wednesday) - Day 14
 TWO WEEKS!! And I got to my first keyboard!
 
