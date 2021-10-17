@@ -4,11 +4,7 @@ namespace MorOS
 {
     InterruptManager::GateDescriptor::GateDescriptor()
     {
-        base_lo   = 0;
-        base_hi   = 0;
-        sel       = 0;
-        always0   = 0;
-        flag_byte = 0;
+        Set(0, 0, 0);
     }
 
     InterruptManager::GateDescriptor::GateDescriptor(uint32_t base, uint16_t selector, uint8_t flags)

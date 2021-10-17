@@ -4,14 +4,8 @@ namespace MorOS
 {
 
     SegmentDescriptor::SegmentDescriptor()
-    {
-        base_low    = 0;
-        base_middle = 0;
-        base_high   = 0;
-        limit_low   = 0;
-        granularity = 0;
-        access      = 0;
-    }
+        :   limit_low(0), base_low(0), base_middle(0), access(0), granularity(0), base_high(0)
+    {  }
 
     SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t acc, uint8_t gran)
     {
