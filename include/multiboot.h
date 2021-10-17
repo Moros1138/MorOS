@@ -202,12 +202,12 @@ struct multiboot_info
   multiboot_uint8_t framebuffer_type;
   union
   {
-    struct
+    struct framebuffer_indexed_colors
     {
       multiboot_uint32_t framebuffer_palette_addr;
       multiboot_uint16_t framebuffer_palette_num_colors;
     };
-    struct
+    struct framebuffer_rgb_colors
     {
       multiboot_uint8_t framebuffer_red_field_position;
       multiboot_uint8_t framebuffer_red_mask_size;
@@ -216,7 +216,7 @@ struct multiboot_info
       multiboot_uint8_t framebuffer_blue_field_position;
       multiboot_uint8_t framebuffer_blue_mask_size;
     };
-  };
+  } framebuffer;
 };
 typedef struct multiboot_info multiboot_info_t;
 
