@@ -96,15 +96,24 @@ namespace MorOS
 
     void Monitor::Swap()
     {
-        if(mode == Monitor::Mode::Text)
+        prevRetrace = retrace;
+        retrace = inb(VGA_INSTAT_READ) & 0x8;
+        
+        bool flag = !prevRetrace && retrace;
+
+        if(mode == Monitor::Mode::Text && flag)
         {
+            uint16_t* pTemp = (uint16_t*)0xB8000;
             for(size_t i = 0; i < 2000; i++)
-                ((uint16_t*)0xb8000)[i] = pTextBuffer[i];
+                pTemp[i] = pTextBuffer[i];
         }
             
-        if(mode == Monitor::Mode::Graphics)
-            memcpy((uint8_t*)0xA0000, pGraphicsBufffer, 64000);
-            
+        if(mode == Monitor::Mode::Graphics && flag)
+        {
+            uint8_t* pTemp = (uint8_t*)0xA0000;
+            for(size_t i = 0; i < 64000; i++)
+                pTemp[i] = pGraphicsBufffer[i];
+        }
     }
 
     int32_t Monitor::Width()
