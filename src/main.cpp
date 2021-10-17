@@ -13,7 +13,6 @@
 
 using namespace MorOS;
 
-
 namespace std
 {
     template<class T>
@@ -39,7 +38,6 @@ int GetDrawTargetHeight()
 {
     return 200;
 }
-
 
 void Clear(uint8_t col)
 {
@@ -277,17 +275,18 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     Mouse mouse{};
 
     monitor.SetMode(Monitor::Mode::Graphics);
-    
-    uint32_t tp1, tp2;
-    
-    // just chill out forever!
+
     while(1)
     {
-        // Clear(0);
-        // FillRect(10, 10, ScreenWidth() - 20, ScreenHeight() - 20, 4);
-        FillCircle(mouse.GetMouseX(), mouse.GetMouseY(), 15, rand() % 256);
-        
-        if(Timer::tick % 200)
-            monitor.Swap();
+        for(int y = 0; y < ScreenHeight(); y++)
+            for(int x = 0; x < ScreenWidth(); x++)
+                Draw(x, y, rand() % 256);
+
+        FillCircle(mouse.GetMouseX(), mouse.GetMouseY(), 10, 5);
+
+        monitor.Swap();
     }
+
+
+
 }
