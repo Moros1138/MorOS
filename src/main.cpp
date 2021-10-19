@@ -133,7 +133,7 @@ void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint8_t p, uint32_
     }
 }
 
-void DrawCircle(int32_t x, int32_t y, int32_t radius, uint8_t p, uint8_t mask)
+void DrawCircle(int32_t x, int32_t y, int32_t radius, uint8_t p, uint8_t mask = 0xff)
 { // Thanks to IanM-Matrix1 #PR121
     if (radius < 0 || x < -radius || y < -radius || x - GetDrawTargetWidth() > radius || y - GetDrawTargetHeight() > radius)
         return;
@@ -278,11 +278,24 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
 
     while(1)
     {
-        for(int y = 0; y < ScreenHeight(); y++)
-            for(int x = 0; x < ScreenWidth(); x++)
-                Draw(x, y, rand() % 256);
+        // for(int y = 0; y < ScreenHeight(); y++)
+        //     for(int x = 0; x < ScreenWidth(); x++)
+        //         Draw(x, y, rand() % 256);
+        
+        Clear(7);
+        
+        uint8_t col = 5;
 
-        FillCircle(mouse.GetMouseX(), mouse.GetMouseY(), 10, 5);
+        if(mouse.GetButton(0))
+            col = 4;
+            
+        if(mouse.GetButton(1))
+            col = 3;
+        
+        if(mouse.GetButton(2))
+            col = 2;
+
+        FillCircle(mouse.GetMouseX(), mouse.GetMouseY(), 5, col);
 
         monitor.Swap();
     }

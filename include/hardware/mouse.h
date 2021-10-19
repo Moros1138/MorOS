@@ -17,15 +17,20 @@ namespace MorOS
         // globally accessible instance of this class
         static Mouse* activeMouse;
         
+
+
         // the interrupt handler for our mouse
         static void handler(registers_t regs);
+        static uint8_t offset;
+        static uint8_t buffer[3];
+
+        void Wait(uint8_t type);
+        uint8_t Read();
+        void Write(uint8_t value);
 
     public: // Update functions    
         
-        // update mouse x/y coordinates
-        void UpdatePosition(int32_t x, int32_t y);
-        // update button states
-        void UpdateFlags(uint8_t flags);
+        void ProcessPacket();
     
     public: // Position and Button Getters
         
