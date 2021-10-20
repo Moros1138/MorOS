@@ -12,6 +12,9 @@ namespace MorOS
     {
         activeMouse = this;
         mon = Monitor::activeMonitor;
+        
+        // initialize mouse position
+        _x = _y = 0;
 
         uint8_t status;
 
@@ -145,9 +148,20 @@ namespace MorOS
 
     void Mouse::handler(registers_t regs)
     {
-        // read this byte into the buffer
-        Mouse::buffer[Mouse::offset] = inb(0x60); // Mouse::activeMouse->Read();
+
+        // wait until bit 0 is set on port 0x64
+        uint16_t timeout = 0xffff;
+        while(timeout--)
+        {
+            if((inb(0x64) & 1) == 1)
+                break;
+        }
         
+        // let's assume that if we've made it here, we can
+        // read from port 0x60 safely
+        
+        // read this byte into the buffer
+        Mouse::buffer[Mouse::offset] = inb(0x60);
         
         // increment offset
         Mouse::offset = (Mouse::offset + 1) % 3;
