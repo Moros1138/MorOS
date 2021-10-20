@@ -274,7 +274,7 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
     // mouse
     Mouse mouse{};
 
-    monitor.SetMode(Monitor::Mode::Graphics);
+    // monitor.SetMode(Monitor::Mode::Graphics);
 
     while(1)
     {
@@ -282,21 +282,22 @@ extern "C" void _main(multiboot_info_t* mbd, uint32_t)
         //     for(int x = 0; x < ScreenWidth(); x++)
         //         Draw(x, y, rand() % 256);
         
-        Clear(7);
+        // Clear(7);
         
-        uint8_t col = 5;
+        // uint8_t col = 5;
 
-        if(mouse.GetButton(0))
-            col = 4;
+        // if(mouse.GetButton(0))
+        //     col = 4;
             
-        if(mouse.GetButton(1))
-            col = 3;
+        // if(mouse.GetButton(1))
+        //     col = 3;
         
-        if(mouse.GetButton(2))
-            col = 2;
+        // if(mouse.GetButton(2))
+        //     col = 2;
 
-        FillCircle(mouse.GetMouseX(), mouse.GetMouseY(), 5, col);
+        // FillCircle(mouse.GetMouseX(), mouse.GetMouseY(), 5, col);
 
+        // printf("%d %d %d %d %d\n", mouse.GetMouseX(), mouse.GetMouseY(), mouse.GetButton(0), mouse.GetButton(1), mouse.GetButton(2));
         monitor.Swap();
     }
 
