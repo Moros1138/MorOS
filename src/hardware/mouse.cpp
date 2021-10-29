@@ -7,6 +7,7 @@ namespace MorOS
     
     uint8_t Mouse::offset = 0;
     uint8_t Mouse::buffer[3] = {0};
+    uint8_t Mouse::packetSize = 0;
 
     Mouse::Mouse()
     {
@@ -44,6 +45,8 @@ namespace MorOS
         Write(0xf4);
         Read(); // ACK
 
+        packetSize = 3;
+        
         register_interrupt_handler(IRQ12, &MorOS::Mouse::handler);
     }
     
@@ -106,6 +109,13 @@ namespace MorOS
     
     void Mouse::ProcessPacket()
     {
+        // attempt to resync
+        if((buffer[0] & 0x08) == 0)
+        {
+            offset++;
+            return;
+        }
+
         // toss packet if y overflow bit is set
         if((buffer[0] & 0x80) == 1)
             return;
@@ -148,23 +158,11 @@ namespace MorOS
 
     void Mouse::handler(registers_t regs)
     {
-
-        // wait until bit 0 is set on port 0x64
-        uint16_t timeout = 0xffff;
-        while(timeout--)
-        {
-            if((inb(0x64) & 1) == 1)
-                break;
-        }
-        
-        // let's assume that if we've made it here, we can
-        // read from port 0x60 safely
-        
         // read this byte into the buffer
         Mouse::buffer[Mouse::offset] = inb(0x60);
         
         // increment offset
-        Mouse::offset = (Mouse::offset + 1) % 3;
+        Mouse::offset = (Mouse::offset + 1) % Mouse::packetSize;
 
         // if we have a complete packet, let's process it!
         if(Mouse::offset == 0)

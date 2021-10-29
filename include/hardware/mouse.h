@@ -21,8 +21,10 @@ namespace MorOS
 
         // the interrupt handler for our mouse
         static void handler(registers_t regs);
+        
         static uint8_t offset;
         static uint8_t buffer[3];
+        static uint8_t packetSize;
 
         void Wait(uint8_t type);
         uint8_t Read();
