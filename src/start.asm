@@ -16,7 +16,7 @@ MUTLIBOOT_CHECKSUM  equ -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
 
 ; c/c++ entry point
 extern kernel_setup
-extern kernel_main
+extern main
 
 ; multiboot entrypoint
 global _start
@@ -63,7 +63,7 @@ _start:
     cmp eax, 0x3badb002
     jne die
 
-    call kernel_main
+    call main
     
 die:
     cli     ; disable interrupts

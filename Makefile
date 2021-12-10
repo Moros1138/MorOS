@@ -39,7 +39,8 @@ KERNEL_OBJS := \
 	obj/stdlib/printf.o \
 	obj/mem.o \
 	obj/event.o \
-	obj/kernel.o 
+	obj/kernel.o \
+	obj/main.o
 
 .PHONY: dirs all
 
