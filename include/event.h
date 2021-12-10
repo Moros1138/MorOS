@@ -50,6 +50,8 @@ typedef union _event
 
 // initalize the event queue
 void event_init();
+// print the details of an event for debug purposes
+void print_event(event_t* e);
 // true; if there are events in the queue
 bool event_pending();
 // retrieves the next available event, or empty event if queue is empty

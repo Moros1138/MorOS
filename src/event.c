@@ -69,6 +69,19 @@ void event_init()
     itemCount = 0;
 }
 
+void print_event(event_t* e)
+{
+    printf("TYPE: %s ", event_names[e->type]);
+
+    if(e->type == KeyPress || e->type == KeyRelease)
+        printf(" | Scancode(0x%04x) Keycode(0x%02x) | ", e->key.scancode, e->key.keycode);
+    
+    if(e->type == ButtonPress || e->type == ButtonRelease)
+        printf(" | Button(%d) | ", e->button.button);
+    
+    printf("\n");
+}
+
 void event_fire(event_t* event)
 {
     insert(*event);
@@ -88,3 +101,4 @@ void event_next(event_t* event)
     if(!isEmpty())
         *event = removeData();
 }
+
