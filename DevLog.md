@@ -1,3 +1,28 @@
+# December 10, 2021 (Friday) - Hell if I know!
+Sooo.. everything we've accomplished so far. Assume that I have scrapped it all and started over. While some things may look similar, the entire system, step by step has been painstakingly reimplemented in an attempt to understand what's going on!
+
+A few things I want to focus on.
+
+First, I decided to cheat and link libgcc into my kernel which gives me 64-bit math functions in 32-bit protected mode.
+
+I've decided that the core kernel functions would be written in C, not C++. Not that I think C++ is a bad idea or anything but I found the temptation to use C++ features would distract me from getting the work done.
+
+Implemented a rudimentary set of memory allocation (heap) functionality. ``malloc``, ``free``, ``realloc``, and ``free`` are now available through the kernel after the heap is initialized. The heap is initialized IMMEDIATELY following the initialization of the CPUs GDT/IDT and interrupt services!
+
+Implemented a rudimentary keyboard and mouse interrupt handler. A short round of testing proved that I was going to need some sort of queue to make handling events across the kernel less like putting my balls in a vice!
+
+Once I had an event queue implemented, I spent some more time on the keyboard and mouse interrupt handlers to make them utilize the event system. The event system got some tweaks to make everything play nicely as well.
+
+Finally, the reason I took the break, I hit a brick wall concerning the touchpad on my laptop. It wouldn't work. I spent a great deal of time learning that I would need to write a completely separate and custom driver to support the touchpad because it doesn't actually use the PS/2 protocol. I've decided to put that on the back burner because I'm less interested in getting a touchpad working anyways. I just thought it would be really cool to show off a mouse **working** on a **REAL MACHINE**.
+
+That brings us to now. The next step is to bring in the olc::PixelGameEngine and write my custom ``platform`` and ``renderer`` for it that utilizes everything MorOS can currently provide AND to see what else I need to provide!
+
+I imagine I will have to implement more than a few C++ STL. I've already implemented the ``std::vector``. It's probably not the best, but who cares!
+
+That's all for now.
+
+
+
 # October 17, 2021 (Sunday) - Day 18
 So I wanted to really really learn more about what was actually happening with the VGA. I found some more examples and started to get a much better idea of what was going on.
 
