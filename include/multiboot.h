@@ -202,12 +202,12 @@ struct multiboot_info
   multiboot_uint8_t framebuffer_type;
   union
   {
-    struct framebuffer_indexed_colors
+    struct
     {
       multiboot_uint32_t framebuffer_palette_addr;
       multiboot_uint16_t framebuffer_palette_num_colors;
-    };
-    struct framebuffer_rgb_colors
+    } framebuffer_palette;
+    struct
     {
       multiboot_uint8_t framebuffer_red_field_position;
       multiboot_uint8_t framebuffer_red_mask_size;
@@ -215,8 +215,8 @@ struct multiboot_info
       multiboot_uint8_t framebuffer_green_mask_size;
       multiboot_uint8_t framebuffer_blue_field_position;
       multiboot_uint8_t framebuffer_blue_mask_size;
-    };
-  } framebuffer;
+    } framebuffer_rgb_field_mask;
+  } framebuffer_union;
 };
 typedef struct multiboot_info multiboot_info_t;
 
@@ -230,12 +230,8 @@ struct multiboot_color
 struct multiboot_mmap_entry
 {
   multiboot_uint32_t size;
-  multiboot_uint32_t addr_low;
-  multiboot_uint32_t addr_high;
-  multiboot_uint32_t len_low;
-  multiboot_uint32_t len_high;
-  // multiboot_uint64_t addr;
-  // multiboot_uint64_t len;
+  multiboot_uint64_t addr;
+  multiboot_uint64_t len;
 #define MULTIBOOT_MEMORY_AVAILABLE              1
 #define MULTIBOOT_MEMORY_RESERVED               2
 #define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3

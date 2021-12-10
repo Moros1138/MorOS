@@ -1,80 +1,95 @@
-# Using a custom built cross-compiler
-#
-# https://wiki.osdev.org/GCC_Cross-Compiler
-#
-CC		:=	i686-elf-g++
-# AS		:=	i686-elf-as -c
-AS		:=	nasm -felf32
-LD		:=	i686-elf-ld
+# QEMU OPTIONS
+# QEMU_OPTS	:= -m 4G
 
-# directories
-BIN		:=	bin
-INC		:= 	include
-OBJ		:=	obj
-SRC		:=	src
+DEBUG	:=
+RELEASE := -O2 -s
 
-# compiler flags
-CFLAGS	:=	-I$(INC) -Werror -Wall -Wpedantic -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
+BUILD	:= $(RELEASE)
 
-# linker flags
-LDFLAGS	:=	
+# okay let's do some makefile fu!!
+CC	:= i686-elf-gcc
+AS	:= nasm -f elf32
+LD	:= i686-elf-ld
 
-# kernel object files
-KERNEL_OBJS	:=\
-	$(OBJ)/loader.o \
-	$(OBJ)/descriptors/gdt.o \
-	$(OBJ)/descriptors/idt.o \
-	$(OBJ)/isr.o \
-	$(OBJ)/io.o \
-	$(OBJ)/hardware/monitor.o \
-	$(OBJ)/hardware/timer.o \
-	$(OBJ)/hardware/keyboard.o \
-	$(OBJ)/hardware/mouse.o \
-	$(OBJ)/memory.o \
-	$(OBJ)/random.o \
-	$(OBJ)/main.o
+BIN	:= bin
+LIB := /home/jon/opt/cross/lib/gcc/i686-elf/11.2.0
+INC	:= include
+OBJ	:= obj
+SRC	:= src
 
-# make all
-all: dirs img
+CFLAGS	:= $(BUILD) -I$(INC) -Werror -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -std=c99
+CCFLAGS	:= $(BUILD) -I$(INC) -Werror -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -fno-rtti -fno-exceptions -fno-use-cxa-atexit
+LDFLAGS	:= -L$(LIB) -lgcc
 
-# create directories if they don't exist
+KERNEL		:= $(BIN)/kernel.bin
+IMAGE		:= $(BIN)/MorOS.iso
+
+KERNEL_OBJS := \
+	obj/start.o \
+	obj/hardware/io.o \
+	obj/hardware/cpu.o \
+	obj/hardware/timer.o \
+	obj/hardware/keyboard.o \
+	obj/hardware/mouse.o \
+	obj/hardware/vga.o \
+	obj/hardware/serial.o \
+	obj/stdlib/cppstub.o \
+	obj/stdlib/string.o \
+	obj/stdlib/random.o \
+	obj/stdlib/printf.o \
+	obj/mem.o \
+	obj/event.o \
+	obj/kernel.o 
+
+.PHONY: dirs all
+
+all: dirs $(KERNEL)
+
 dirs:
-	mkdir -p $(BIN) $(OBJ)/hardware $(OBJ)/descriptors
+	@mkdir -p obj/stdlib
+	@mkdir -p obj/hardware
+	@mkdir -p bin
+	@mkdir -p logs
 
-# assemble!
-$(OBJ)/%.o: $(SRC)/%.asm
-	$(AS) $< -o $@
+obj/%.o: src/%.asm
+	@echo AS: $@
+	@$(AS) $< -o $@
 
-# compile C
-$(OBJ)/%.o: $(SRC)/%.c
-	$(CC) -c $< -o $@ $(CFLAGS)
+obj/%.o: src/%.c
+	@echo CC: $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-# compile C++
-$(OBJ)/%.o: $(SRC)/%.cpp
-	$(CC) -c $< -o $@ $(CFLAGS)
+obj/%.o: src/%.cpp
+	@echo CPP: $@
+	@$(CC) $(CCFLAGS) -c $< -o $@
 
-$(OBJ)/%.o: $(SRC)/%.txt
-	$(LD) -r -b binary $< -o $@
+# kernel
+$(KERNEL): $(KERNEL_OBJS)
+	@echo LD: linking $(KERNEL_OBJS)
+	@$(LD) -o $(KERNEL) $^ -Tsrc/link.ld $(LDFLAGS) $(BUILD)
 
-# link the kernel
-kernel: $(KERNEL_OBJS)
-	$(LD) -T $(SRC)/link.ld -o $(BIN)/MorOS.kernel $(LDFLAGS) $(KERNEL_OBJS)
+# create disk image
+$(IMAGE): $(KERNEL)
+	@echo Creating Disk Image
+	@mkdir -p isodir/boot/grub
+	@cp $(KERNEL) isodir/boot/MorOS.kernel
+	@cp $(SRC)/grub.cfg isodir/boot/grub/grub.cfg
+	@grub-mkrescue -o $(BIN)/MorOS.iso isodir 2> /dev/null
+	@rm -rf isodir
 
-# build the bootable iso image
-img: dirs kernel
-	mkdir -p isodir/boot/grub
-	cp $(BIN)/MorOS.kernel isodir/boot/MorOS.kernel
-	cp $(SRC)/grub.cfg isodir/boot/grub/grub.cfg
-	grub-mkrescue -o $(BIN)/MorOS.iso isodir
-	rm -rf isodir
-
-# run the kernel in qemu
-run: dirs kernel
-	qemu-system-i386 -kernel $(BIN)/MorOS.kernel
-
-# run the iso image in qemu
-run-img: dirs img
-	qemu-system-i386 -cdrom $(BIN)/MorOS.iso
+# run the disk image in qemu
+run: $(IMAGE)
+	@echo Running Image
+	@echo
+	@qemu-system-i386 -drive format=raw,file=$(IMAGE) $(QEMU_OPTS) -chardev stdio,id=char0,mux=on,logfile=logs/$(shell date +"%Y%m%d.%T").serial.log,signal=on -serial chardev:char0 -mon chardev=char0
 
 clean:
-	rm -f $(BIN)/MorOS.iso $(BIN)/MorOS.kernel $(KERNEL_OBJS)
+	@echo Cleaning Artifacts
+	@rm -f $(KERNEL) $(IMAGE) $(KERNEL_OBJS)
+
+clean-log:
+	@echo Cleaning Logs
+	@rm -f logs/*.log
+
+install:
+	cp $(KERNEL) /boot/MorOS.kernel

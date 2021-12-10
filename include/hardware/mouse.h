@@ -1,60 +1,22 @@
-#ifndef _MOROS_MOUSE_H
-#define _MOROS_MOUSE_H
+#ifndef MOUSE_H
+#define MOUSE_H
 
-#include "types.h"
-#include "isr.h"
-#include "io.h"
+#include "stdint.h"
 
-#include "hardware/monitor.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace MorOS
-{
-    class Mouse
-    {
-    public:
-        Mouse();
-        
-        // globally accessible instance of this class
-        static Mouse* activeMouse;
-        
+#define MOUSE_LEFT      0
+#define MOUSE_MIDDLE    2
+#define MOUSE_RIGHT     1
+#define MOUSE_EXTRA1    3
+#define MOUSE_EXTRA2    4
 
+void mouse_init();
 
-        // the interrupt handler for our mouse
-        static void handler(registers_t regs);
-        
-        static uint8_t offset;
-        static uint8_t buffer[3];
-        static uint8_t packetSize;
+#ifdef __cplusplus
+}
+#endif
 
-        void Wait(uint8_t type);
-        uint8_t Read();
-        void Write(uint8_t value);
-
-    public: // Update functions    
-        
-        void ProcessPacket();
-    
-    public: // Position and Button Getters
-        
-        // get current mouse x coordinate
-        int GetMouseX();
-        // get current mouse y coordinate
-        int GetMouseY();
-        // get if the provided mouse button is held
-        bool GetButton(int b);
-
-    private:
-        // position: x coordinate in characters or pixels, depends on screen mode
-        int32_t _x;
-        // position: y coordinate in characters or pixels, depends on screen mode
-        int32_t _y;
-        // button states
-        uint8_t _flags;
-
-        // reference to the global monitor
-        Monitor* mon;
-    };
-    
-} // MorOS
-
-#endif // _MOROS_MOUSE_H
+#endif // MOUSE_H

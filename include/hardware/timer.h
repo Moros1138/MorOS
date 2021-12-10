@@ -1,26 +1,17 @@
-#ifndef _MOROS_TIMER_H
-#define _MOROS_TIMER_H
+#ifndef TIMER_H
+#define TIMER_H
 
-#include "hardware/monitor.h"
-#include "io.h"
-#include "isr.h"
+#include "stdint.h"
 
-namespace MorOS
-{
-    class Timer
-    {
-    public:
-        Timer();
-        Timer(uint32_t freq);
-        ~Timer();
-        
-        void init(uint32_t freq);
-        void set(uint32_t freq);
-        
-        static void callback(registers_t regs);
-        static uint32_t tick;
-    }; // Timer
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-} // MorOS
+void timer_init();
+uint32_t timer_get_time_point();
 
-#endif // _MOROS_TIMER_H
+#ifdef __cplusplus
+}
+#endif
+
+#endif
