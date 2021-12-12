@@ -25,6 +25,9 @@ global _start
 global gdt_flush
 global idt_flush
 
+; fpu routines
+global fpu_init
+
 ; isr routines
 extern isr_handler
 extern irq_handler
@@ -69,6 +72,23 @@ die:
     cli     ; disable interrupts
     hlt     ; halt the cpu
     jmp $   ; loop here forever, if we make it here
+
+fpu_init:
+    pusha
+
+    clts
+    mov eax, cr0
+    and eax, -5
+    or  eax, 2
+    mov cr0, eax
+
+    mov eax, cr4
+    or  eax, 1536
+    mov cr4, eax
+    fninit
+
+    popa
+    ret
 
 
 gdt_flush:
