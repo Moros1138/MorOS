@@ -31,15 +31,18 @@ KERNEL_OBJS := \
 	obj/hardware/timer.o \
 	obj/hardware/keyboard.o \
 	obj/hardware/mouse.o \
+	obj/hardware/vgaPalette.o \
 	obj/hardware/vga.o \
 	obj/hardware/serial.o \
 	obj/stdlib/cppstub.o \
+	obj/stdlib/math.o \
 	obj/stdlib/string.o \
 	obj/stdlib/random.o \
 	obj/stdlib/printf.o \
 	obj/mem.o \
 	obj/event.o \
 	obj/kernel.o \
+	obj/engine.o \
 	obj/main.o
 
 .PHONY: dirs all
@@ -63,6 +66,9 @@ obj/%.o: src/%.c
 obj/%.o: src/%.cpp
 	@echo CPP: $@
 	@$(CC) $(CCFLAGS) -c $< -o $@
+
+obj/%.o: src/%.bin
+	@$(LD) -r -b binary $< -o $@
 
 # kernel
 $(KERNEL): $(KERNEL_OBJS)
