@@ -25,8 +25,8 @@ int kernel_setup(multiboot_info_t* mbd, unsigned int magic)
     memory_init(mbd);
     event_init();
 
-    vga_init();
     serial_init();
+    vga_init();
     timer_init();
     keyboard_init();
     mouse_init();
