@@ -35,6 +35,7 @@
 
 #include "stdint.h"
 
+#include "assert.h"
 #include "hardware/serial.h"
 #include "hardware/vga.h"
 
@@ -43,7 +44,10 @@
 void _putchar(char character)
 {
     if(vga_running())
-        vga_putc(character);
+    {
+      vga_text_putc(character);
+    }
+        
 
     if(!serial_running())
         return;
