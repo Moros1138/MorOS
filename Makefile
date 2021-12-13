@@ -32,6 +32,7 @@ KERNEL_OBJS := \
 	obj/hardware/keyboard.o \
 	obj/hardware/mouse.o \
 	obj/hardware/vgaPalette.o \
+	obj/hardware/vgaFont.o \
 	obj/hardware/vga.o \
 	obj/hardware/serial.o \
 	obj/stdlib/cppstub.o \
