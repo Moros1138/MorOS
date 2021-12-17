@@ -35,6 +35,7 @@ KERNEL_OBJS := \
 	obj/hardware/vgaFont.o \
 	obj/hardware/vga.o \
 	obj/hardware/serial.o \
+	obj/hardware/fpu.o \
 	obj/stdlib/cppstub.o \
 	obj/stdlib/math.o \
 	obj/stdlib/string.o \
@@ -89,6 +90,7 @@ $(IMAGE): $(KERNEL)
 run: $(IMAGE)
 	@echo Running Image
 	@echo
+	# @qemu-system-i386 -drive format=raw,file=$(IMAGE) $(QEMU_OPTS) -d cpu_reset -serial stdio
 	@qemu-system-i386 -drive format=raw,file=$(IMAGE) $(QEMU_OPTS) -chardev stdio,id=char0,mux=on,logfile=logs/$(shell date +"%Y%m%d.%T").serial.log,signal=on -serial chardev:char0 -mon chardev=char0
 
 clean:
