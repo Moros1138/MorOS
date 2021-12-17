@@ -63,7 +63,7 @@ static void keyboard_interrupt_handler(registers_t regs)
     isExtendedKey = false;
 }
 
-void keyboard_init()
+int keyboard_init()
 {
     UNUSED(keys);
     
@@ -72,4 +72,6 @@ void keyboard_init()
 
     // register keyboard interrupt handler
     register_interrupt_handler(IRQ1, &keyboard_interrupt_handler);
+
+    return 1;
 }

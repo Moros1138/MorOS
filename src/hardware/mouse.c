@@ -151,13 +151,15 @@ uint8_t mouse_identify()
     return inb(0x60);
 }
 
-void mouse_init()
+int mouse_init()
 {
     // initilaize variables
     memset(&packet, 0, sizeof(uint8_t) * 4);
     packetIndex = 0;
     packetSize  = 3; // default, will be 4 later
 
+    __asm__ __volatile__("cli;");
+    
     // Enable Auxiliar Device Command
     outb(CTRL_PORT, 0xa8);
 
@@ -211,4 +213,6 @@ void mouse_init()
     mouse_read(DATA_PORT); // ACK
     
     register_interrupt_handler(IRQ12, &mouse_interrupt_handler);
+    __asm__ __volatile__("sti;");
+    return 1;
 }

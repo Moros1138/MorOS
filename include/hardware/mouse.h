@@ -13,7 +13,7 @@ extern "C" {
 #define MOUSE_EXTRA1    3
 #define MOUSE_EXTRA2    4
 
-void mouse_init();
+int mouse_init();
 
 #ifdef __cplusplus
 }

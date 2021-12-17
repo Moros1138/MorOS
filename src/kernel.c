@@ -27,12 +27,18 @@ int kernel_setup(multiboot_info_t* mbd, unsigned int magic)
 
     serial_init();
     vga_init();
-    timer_init();
-    keyboard_init();
-    mouse_init();
     
-    // vga_mode13();
-    fpu_init();
+    if(!fpu_init())
+        __asm__ __volatile__("mov $0xdead0001, %edx; int $0x1;");
 
+    timer_init();       // IRQ0
+    
+    if(!keyboard_init()) // IRQ1
+        __asm__ __volatile__("mov $0xdead0002, %edx; int $0x1;");
+    
+    if(!mouse_init()) // IRQ12
+        __asm__ __volatile__("mov $0xdead0003, %edx; int $0x1;");
+
+    // currently not used, but might be useful later for debugging
     return 0x3badb002;
 }

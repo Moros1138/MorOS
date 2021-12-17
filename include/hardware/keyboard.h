@@ -111,7 +111,7 @@ extern "C" {
 #define KEY_INSERT          210
 #define KEY_DELETE          211
 
-void keyboard_init();
+int keyboard_init();
 
 #ifdef __cplusplus
 }

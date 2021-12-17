@@ -1,3 +1,4 @@
+#include "hardware/vga.h"
 #include "hardware/cpu.h"
 #include "hardware/interrupts.h"
 #include "hardware/io.h"
@@ -173,7 +174,30 @@ char* interrupt_names[] = {
 
 void isr_handler(registers_t regs)
 {
-    printf("Unhandled Interrupt: %d\n%s\n", regs.int_no, interrupt_names[regs.int_no]);
+    vga_set_mode(TextMode);
+
+    printf("                                                        \n");
+    printf("  ####  #    #      ####      ### ####   #    # ##  ##  \n");
+    printf(" #    # #    #      #   #    #  # #    # ##   # ##  ##  \n");
+    printf(" #    # #    #      #    #  #   # #    # # #  # ##  ##  \n");
+    printf(" #    # ######      #    # #   ## #    # # #  # ##  ##  \n");
+    printf(" #    # ######      #    # ###### #####  #  # # ##  ##  \n");
+    printf(" #    # #    #      #    # #    # # #    #  # #         \n");
+    printf(" #    # #    #      #   #  #    # #  ##  #   ## ##  ##  \n");
+    printf("  ####  #    # ##   ####   #    # #    # #    #  #  #   \n");
+    printf("                #                                       \n\n");
+
+    printf("%s (0x%08x)\n\n", interrupt_names[regs.int_no], regs.err_code);
+    printf("THE INFO:\n\n");
+    printf("CS      : 0x%08x        DS    : 0x%08x\n", regs.cs, regs.ds);
+    printf("EDI     : 0x%08x        ESI   : 0x%08x\n", regs.edi, regs.esi);
+    printf("EBP     : 0x%08x        ESP   : 0x%08x\n", regs.ebp, regs.esp);
+    printf("EAX     : 0x%08x        EBX   : 0x%08x\n", regs.eax, regs.ebx);
+    printf("ECX     : 0x%08x        EDX   : 0x%08x\n", regs.ecx, regs.edx);
+
+    printf("EIP     : 0x%08x        EFLAGS: 0x%08x\n", regs.eip, regs.eflags);
+    printf("USERESP : 0x%08x        SS    : 0x%08x\n", regs.useresp, regs.ss);
+
     while(1);
 }
 
