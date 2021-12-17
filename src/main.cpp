@@ -6,12 +6,42 @@
 #include "event.h"
 #include "hardware/keyboard.h"
 #include "hardware/timer.h"
+#include "hardware/fpu.h"
 #include "string.h"
 #include "math.h"
 
 namespace std
 {
+    double abs(double x)             { return fpu_abs(x);       }
+    double atan(double x)            { return fpu_atan(x);      }
+    double atan2(double y, double x) { return fpu_atan2(y, x);  }
+    double ceil(double x)            { return fpu_ceil(x);      }
+    double cos(double x)             { return fpu_cos(x);       }
+    double floor(double x)           { return fpu_floor(x);     }
+    double mod(double x, double y)   { return fpu_modulo(x, y); }
+    double pow(double x, double y)   { return fpu_pow(x, y);    }
+    double sin(double x)             { return fpu_sin(x);       }
+    double sqrt(double x)            { return fpu_sqrt(x);      }
+    double tan(double x)             { return fpu_tan(x);       }
+    double trunc(double x)           { return fpu_trunc(x);     }
+    
+    template<typename T>
+    inline const T& swap(const T& __a, const T& __b)
+    { const T __t = __a; __b = __a; __a = __t; }
 
+    template<typename T>
+    inline const T& max(const T& __a, const T& __b)
+    {
+        if(__a < __b) return __b;
+        return __a;
+    }
+
+    template<typename T>
+    inline const T& min(const T& __a, const T& __b)
+    {
+        if(__a > __b) return __b;
+        return __a;
+    }
 
 } // std
 
