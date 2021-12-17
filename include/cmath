@@ -1,0 +1,25 @@
+// <cmath> -*- C++ -*-
+#ifndef _CPP_CMATH
+#define _CPP_CMATH
+
+#include "hardware/fpu.h"
+
+namespace std
+{
+    double abs(double x)             { return fpu_abs(x);       }
+    double atan(double x)            { return fpu_atan(x);      }
+    double atan2(double y, double x) { return fpu_atan2(y, x);  }
+    double ceil(double x)            { return fpu_ceil(x);      }
+    double cos(double x)             { return fpu_cos(x);       }
+    double floor(double x)           { return fpu_floor(x);     }
+    double mod(double x, double y)   { return fpu_modulo(x, y); }
+    double pow(double x, double y)   { return fpu_pow(x, y);    }
+    double sin(double x)             { return fpu_sin(x);       }
+    double sqrt(double x)            { return fpu_sqrt(x);      }
+    double tan(double x)             { return fpu_tan(x);       }
+    double trunc(double x)           { return fpu_trunc(x);     }
+   
+
+}
+
+#endif // _CPP_CMATH

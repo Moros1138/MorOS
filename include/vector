@@ -1,5 +1,7 @@
-#ifndef _CPP_VECTOR_H
-#define _CPP_VECTOR_H
+// <vector> -*- C++ -*-
+
+#ifndef _CPP_VECTOR
+#define _CPP_VECTOR
 
 #include "assert.h"
 #include "stdlib.h"
@@ -208,4 +210,4 @@ namespace std
 
 } // std
 
-#endif // _CPP_VECTOR_H
+#endif // _CPP_VECTOR
