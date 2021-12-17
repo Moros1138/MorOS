@@ -70,9 +70,26 @@ void Rect(int x, int y, int w, int h, uint8_t col)
             Draw(i, j, col);
 }
 
+
+using namespace std;
+
 int main()
 {
     srand(0);
+
+    printf("abs  (-3.14)     %lf\n", abs(-3.14));
+    printf("atan (3.14)      %lf\n", atan(3.14));
+    printf("atan2(3.14, 0.5) %lf\n", atan2(3.14, 0.5));
+    printf("ceil (3.14)      %lf\n", ceil (3.14));
+    printf("cos  (3.14)      %lf\n", cos  (3.14));
+    printf("floor(3.14)      %lf\n", floor(3.14));
+    printf("mod  (3.14, 0.5) %lf\n", mod  (3.14, 0.5));
+    printf("pow  (100., 0.5) %lf\n", pow  (100., 0.5));
+    printf("sin  (3.14)      %lf\n", sin  (100.));
+    printf("sqrt (100.)      %lf\n", sqrt (3.14));
+    printf("tan  (3.14)      %lf\n", tan  (3.14));
+    printf("trunc(3.14)      %lf\n", trunc(3.14));
+
     bool graphicsMode = false;
     bool graphicsRunning = true;
 
@@ -104,7 +121,7 @@ int main()
         while(event_pending())
         {
             event_next(&e);
-            // print_event(&e);
+            print_event(&e);
             if(e.type == KeyPress && e.key.keycode == KEY_SPACE)
             {
                 graphicsMode = !graphicsMode;
@@ -130,17 +147,24 @@ int main()
         float radius = 50.0f;
         Rect(160 + (cos(off) * radius), 100 + (sin(off) * radius), 5, 5, (col++ % 16));
         Draw(160, 100, 3);
-
+        int period = 0;
         for(int x = 0; x < 320; x++)
         {
-            Draw(x, 100 + sin((off*2.0f) + float(x) / 320.f * PI * 2) * 50, (col++ % 16));
-            Draw(x, 100 + sin((off*1.1f) + float(x) / 320.f) * 50, 15);
+            double long_wave = sin((off*1.1f) + float(x) / 320.f) * 50;
+            double short_wave = sin((off*2.0f) + float(x) / 320.f * PI * 2) * 50;
+            if((short_wave - -49.) < 0.0000000001)
+                period = x;
+
+            Draw(x, 100 + short_wave, (col++ % 16));
+            Draw(x, 100 + long_wave, 15);
         }
 
+        for(int y = 0; y < 200; y++)
+        {
+            Draw(period, y, 2);
+        }
         Swap();
     }
 
-
-    
     return 0;
 }
