@@ -54,18 +54,24 @@ namespace std
     //--------------------------------------------------------------
     public:
         // access specified element with bounds checking
-        T& at(size_t pos)
+        T& at(size_t pos) const
         {
             // TODO: some bounds checking
             return _data[pos];
         }
-        
+
+
         // access specified element
-        T& operator[](size_t pos)
+        T& operator[](size_t pos) const
         {
             return _data[pos];
         }
-        
+
+        // T& operator[](size_t& pos)
+        // {
+        //     return _data[pos];
+        // }
+
         // access the first element
         T& front()
         {
@@ -189,7 +195,34 @@ namespace std
         //     push_back(value)
         // }
 
-        // void resize(size_t size)
+        void resize(size_t size)
+        {
+            if(_size > size)
+            {
+                _size = size;
+                _capacity = size;
+                return;
+            }
+
+            reserve(size);
+        }
+
+        void resize(size_t size, const T& value)
+        {
+            if(_size > size)
+            {
+                _size = size;
+                _capacity = size;
+            }
+            else
+            {
+                reserve(size);
+            }
+            
+            for(size_t i = 0; i < size; i++)
+                _data[i] = value;
+        }
+
         // void swap(vector& other)
 
         // removes last element of the container
