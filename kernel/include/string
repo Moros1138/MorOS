@@ -178,18 +178,6 @@ namespace std
             _size++;
         }
 
-        // void emplace_back(const T&& value)
-        // {
-        //     if(_size + 1 > _capacity)
-        //         reserve(_capacity * 2);
-
-        //     end()
-        //     push_back(value)
-        // }
-
-        // void resize(size_t size)
-        // void swap(vector& other)
-
         // removes last element of the container
         void pop_back()
         {
@@ -205,11 +193,8 @@ namespace std
         // current number of elements in the array
         size_t _size;
     };
-
-    class string : public basic_string<char>
-    {
-
-    };
+    
+    typedef basic_string<char>    string;
 
 } // std
 
