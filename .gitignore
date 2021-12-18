@@ -1,6 +1,6 @@
-bin
-obj
-logs
+kernel/bin
+kernel/obj
+kernel/logs
 .vscode
 
-include/olcPixelGameEngine.h
+kernel/include/olcPixelGameEngine.h
