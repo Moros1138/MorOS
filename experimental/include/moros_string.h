@@ -1,0 +1,6 @@
+// -*- C++ -*-
+
+namespace MorOS
+{
+
+} // MorOS
