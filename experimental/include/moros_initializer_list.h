@@ -2,74 +2,65 @@
 #ifndef _CXX_MOROS_INITIALIZER_LIST_H
 #define _CXX_MOROS_INITIALIZER_LIST_H
 
-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
-#   include <stdio.h>
-#   include <assert.h>
-#else
-#   include "assert.h"
-#   include "stdlib.h"
-#endif
-
-namespace MorOS
+namespace std
 {
+    template<class T>
+    class initializer_list
+    {
+    public:
+        typedef T value_type;
+        typedef const T& reference;
+        typedef const T& const_reference;
+        typedef size_t size_type;
+        typedef const T* iterator;
+        typedef const T* const_iterator;
 
-template<class T>
-class initializer_list
-{
-    typedef T value_type;
-    typedef const T& reference;
-    typedef const T& const_reference;
-    typedef size_t size_type;
-    
-    typedef const T* iterator;
-    typedef const T* const_iterator;
+    private:
+        iterator _array;
+        size_type _size;
 
-    const_iterator _begin;
-    size_type _size;
-    
-    inline constexpr initializer_list(const_iterator _b, size_type _s) noexcept
-        : _begin(_b),
-          _size(_s)
-    {}
-    
-public:
-    
-    inline
-    constexpr
-    initializer_list() noexcept : __begin_(nullptr), __size_(0) {}
-    
-    inline
-    constexpr
-    size_t    size()  const noexcept {return __size_;}
-    
-    inline
-    constexpr
-    const _Ep* begin() const noexcept {return __begin_;}
-    
-    inline
-    constexpr
-    const _Ep* end()   const noexcept {return __begin_ + __size_;}
+        constexpr initializer_list(const_iterator _a, size_type _s)
+            : _array(_a), _size(_s)
+        {
+        }
+
+    public:
+        constexpr initializer_list() noexcept
+            : _array(0), _size(0)
+        {
+        }
+
+    // Number of elements.
+    constexpr size_type size() const noexcept
+    {
+        return _size;
+    }
+
+    // First element.
+    constexpr const_iterator begin() const noexcept
+    {
+        return _array;
+    }
+
+    // One past the last element.
+    constexpr const_iterator end() const noexcept
+    {
+        return begin() + size();
+    }
 };
 
-template<class _Ep>
-inline
-constexpr
-const _Ep*
-begin(initializer_list<_Ep> __il) noexcept
+template<class T>
+constexpr const T* begin(initializer_list<T> ilist) noexcept
 {
-    return __il.begin();
+    return ilist.begin();
 }
 
-template<class _Ep>
-inline
-constexpr
-const _Ep*
-end(initializer_list<_Ep> __il) noexcept
+template<class T>
+constexpr const T* end(initializer_list<T> ilist) noexcept
 {
-    return __il.end();
+    return ilist.end();
 }
 
-
-} // MorOS
+} // std
 
 #endif // _CXX_MOROS_INITIALIZER_LIST_H
