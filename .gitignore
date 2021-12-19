@@ -4,3 +4,4 @@ kernel/logs
 .vscode
 
 kernel/include/olcPixelGameEngine.h
+experiments/bin
