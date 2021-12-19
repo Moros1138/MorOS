@@ -2,15 +2,17 @@
 #ifndef _CXX_MOROS_VECTOR_H
 #define _CXX_MOROS_VECTOR_H
 
+#include "moros_allocator.h"
+
 #if defined(__GLIBCXX__) || defined(__GLIBCPP__)
 #   include <stdio.h>
 #   include <assert.h>
+#   include <initializer_list>
 #else
 #   include "assert.h"
 #   include "stdlib.h"
+#   include "moros_initializer_list.h"
 #endif
-
-#include "moros_allocator.h"
 
 namespace MorOS
 {
@@ -37,15 +39,21 @@ namespace MorOS
     public:
         vector() : _capacity(0), _elements(0), _size(0)
         {
-            assert(_capacity == 0 && _elements == 0 && _size == 0);
         }
 
         vector(const vector& rhs)
         {
-            __init();
+            _init();
             assign(rhs.begin(), rhs.end());
         }
-        
+
+        vector(std::initializer_list<value_type> ilist, const allocator_type& = allocator_type())
+        {
+            _init();
+            reserve(ilist.size());
+            assign(ilist.begin(), ilist.end());
+        }
+
         ~vector()
         {
             allocator_type allocator;
@@ -57,6 +65,16 @@ namespace MorOS
             _size = 0;
         }
 
+        // assigns values to the container
+        vector<T>& operator=(const vector& rhs)
+        {
+            if(this != &rhs)
+                assign(rhs.begin(), rhs.end());
+            
+            return *this;
+        }
+        
+        // assigns values to the container
         void assign(size_type count, const_reference value)
         {
             clear();
@@ -64,6 +82,7 @@ namespace MorOS
                 push_back(value);
         }
 
+        // assigns values to the container
         template <class InputIterator>
         void assign(InputIterator first, InputIterator last)
         {
@@ -73,6 +92,13 @@ namespace MorOS
                 push_back(*first);
             }
         }
+        
+        // returns the allocator associated with the container
+        allocator_type get_allocator() const
+        {
+            allocator_type allocator;
+            return allocator;
+        }
 
     //--------------------------------------------------------------
     // ELEMENT ACCESS
@@ -81,14 +107,14 @@ namespace MorOS
         // access specified element wiht bounds checking
         reference at(size_type pos)
         {
-            // TODO: bounds checking
+            _range_check(pos);
             return _elements[pos];
         }
 
         // access specified element wiht bounds checking
         const_reference at(size_type pos) const
         {
-            // TODO: bounds checking
+            _range_check(pos);
             return _elements[pos];
         }
 
@@ -137,6 +163,8 @@ namespace MorOS
         {
             return _elements + _size;
         }
+
+        // TODO: reverse iterators
 
     //--------------------------------------------------------------
     // CAPACITY
@@ -217,16 +245,10 @@ namespace MorOS
             _size = 0;
         }
         
-        // insert
-        // emplace
+        // TODO: insert
         
-        // adds an element to the end
-        void push_back(const_reference val)
-        {
-            resize(size() + 1);
-            _elements[_size - 1] = val;
-        }
-
+        // TODO: emplace
+        
         // erase elements
         iterator erase(iterator pos)
         {
@@ -238,6 +260,22 @@ namespace MorOS
             _size--;
             
             return pos;
+        }
+
+        // adds an element to the end
+        void push_back(const_reference val)
+        {
+            resize(size() + 1);
+            _elements[_size - 1] = val;
+        }
+
+        // TODO: emplace_back
+
+        // removes last element of the container
+        void pop_back()
+        {
+            if(!empty())
+                _size--;
         }
 
         // resizes the container to contain count elements
@@ -269,13 +307,6 @@ namespace MorOS
             _size = count;
         }
         
-        // removes last element of the container
-        void pop_back()
-        {
-            if(!empty())
-                _size--;
-        }
-        
         // swaps the contents
         void swap(vector& x)
         {
@@ -283,26 +314,21 @@ namespace MorOS
             __swap(_capacity, x._capacity);
             __swap(_size, x._size);
         }
-
-        vector& operator=(initializer_list)
-
-        vector& operator=(const vector& rhs)
-        {
-            if(this != &rhs)
-                assign(rhs.begin(), rhs.end());
-            
-            return *this;
-        }
-        // vector& operator+=(const vector& rhs);
-
+        
     private:
-        void __init()
+        void _init()
         {
             _size = 0;
             _capacity = 0;
             _elements = 0;
         }
-
+        
+        void _range_check(size_type n)
+        {
+            assert(!(n >= size()));
+        }
+        
+        // internal swap function, see (swap)
         template <class Ty>
         inline void __swap(Ty& x, Ty& y)
         {
@@ -317,20 +343,10 @@ namespace MorOS
             return s;
         }
 
-        size_type _capacity;
-        pointer _elements;
-        size_type _size;
+        size_type _capacity; // capacity
+        pointer _elements;   // the actual data
+        size_type _size;     // size
     };
-
-    // template <class T, class Allocator>
-    // inline vector<T, Allocator>& vector<T, Allocator>::operator=(const vector<T, Allocator>& rhs)
-    // {
-    //     if(this != &rhs)
-    //     {
-    //         assign(rhs.begin(), rhs.end());
-    //     }
-    //     return *this;
-    // }
 
 } // MorOS
 
