@@ -18,7 +18,7 @@ OBJ	:= obj
 SRC	:= src
 
 CFLAGS	:= $(BUILD) -I$(INC) -Werror -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -std=c99
-CCFLAGS	:= $(BUILD) -I$(INC) -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -fno-rtti -fno-exceptions -fno-use-cxa-atexit
+CCFLAGS	:= $(BUILD) -I$(INC) -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -fno-rtti -fno-exceptions -fno-use-cxa-atexit -std=c++17
 LDFLAGS	:= -L$(LIB) -lgcc
 
 KERNEL		:= $(BIN)/kernel.bin
