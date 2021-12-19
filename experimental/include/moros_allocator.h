@@ -10,6 +10,10 @@
 #   include "stdlib.h"
 #endif
 
+#include "moros_config.h"
+
+
+
 namespace MorOS
 {
     template <typename T>
@@ -25,12 +29,12 @@ namespace MorOS
 
         allocator()
         {
-            printf("MorOS::allocator()\n");
+           MOROS_DEBUG("MorOS::allocator()\n");
         }
 
         ~allocator()
         {
-            printf("MorOS::~allocator()\n");
+            MOROS_DEBUG("MorOS::~allocator()\n");
         }
 
         pointer allocate(size_type n, const void* hint = 0)
@@ -41,13 +45,13 @@ namespace MorOS
                 return 0;
             
             pointer ret = new value_type[n];
-            printf("MorOS::allocate(%ld, %ld) - pointer(%ld)\n", n, (size_type)hint, (size_type)ret);
+            MOROS_DEBUG("MorOS::allocate(%ld, %ld) - pointer(%ld)\n", n, (size_type)hint, (size_type)ret);
             return ret;
         }
 
         void deallocate(pointer p, size_type n)
         {
-            printf("MorOS::deallocate(%ld, %ld)\n", (size_type)p, n);
+            MOROS_DEBUG("MorOS::deallocate(%ld, %ld)\n", (size_type)p, n);
             delete[] p;
         }
     };
