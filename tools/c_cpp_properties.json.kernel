@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/jon/opt/cross/lib/gcc/i686-elf/11.2.0/include/**",
+                "${workspaceFolder}/kernel/include/**"
+            ],
+            "defines": ["__i386__"],
+            "compilerPath": "/home/jon/opt/cross/bin/i686-elf-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x86"
+        }
+    ],
+    "version": 4
+}
