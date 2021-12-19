@@ -1,7 +1,9 @@
+experimental/bin
+experimental/obj
+
 kernel/bin
 kernel/obj
 kernel/logs
 .vscode
 
 kernel/include/olcPixelGameEngine.h
-experiments/bin
