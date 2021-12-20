@@ -245,8 +245,39 @@ namespace MorOS
             _size = 0;
         }
         
-        // TODO: insert
-        
+        // insert items
+        iterator insert(const_iterator pos, const_reference value)
+        {
+            // TODO: this function could do with some optimization
+
+            size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
+            
+            resize(size() + 1);
+            
+            // shift all elements after the insertIndex by 1 place
+            for(size_type i = insertIndex; i < size()-1; i++)
+                _elements[i+1] = _elements[i];
+            
+            _elements[insertIndex] = value;
+            
+            return (iterator)&_elements[insertIndex];
+        }
+
+        iterator insert(const_iterator pos, T&& value)
+        {
+            size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
+            
+            resize(size() + 1);
+            
+            // shift all elements after the insertIndex by 1 place
+            for(size_type i = insertIndex; i < size()-1; i++)
+                _elements[i+1] = _elements[i];
+            
+            _elements[insertIndex] = value;
+            
+            return (iterator)&_elements[insertIndex];
+        }
+
         // TODO: emplace
         
         // erase elements
