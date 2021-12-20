@@ -12,8 +12,6 @@
 
 #include "moros_config.h"
 
-
-
 namespace MorOS
 {
     template <typename T>
