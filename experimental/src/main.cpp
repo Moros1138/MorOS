@@ -2,54 +2,27 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stdio.h>
 
 #include "moros_allocator.h"
 #include "moros_vector.h"
-
-struct Test
-{
-    int x;
-    int y;
-
-    Test() : x(0), y(0)     { }
-    Test(int x, int y) : x(x), y(y) { }
-    Test(const Test& rhs)
-    {
-        x = rhs.x;
-        y = rhs.y;
-    }
-
-    Test operator=(const Test& rhs)
-    {
-        if(this != &rhs)
-        {
-            x = rhs.x;
-            y = rhs.y;
-        }
-        return *this;
-    }
-};
+#include "moros_string.h"
 
 int main()
 {
-    MorOS::vector<Test> test{
-        {1, 2},
-        {3, 4}
-    };
+    MorOS::string test1 = "MorOS - Hello, World";
+    MorOS::string test2(test1);
+    MorOS::string test3{"MorOS - Hello, World"};
 
-    std::vector<Test, MorOS::allocator<Test>> test2{
-        {1, 2},
-        {3, 4}
-    };
+    std::string stdTest1 = "MorOS - Hello, World";
+    std::string stdTest2("MorOS - Hello, World");
+    std::string stdTest3{"MorOS - Hello, World"};
 
-    test.insert(test.begin()+1, {10, 11});
-    test2.insert(test2.begin()+1, {10, 11});
+    printf("%s\n", test1.data());
+    printf("%s\n", test2.c_str());
+    printf("%s\n", test3.data());
 
-    for(auto& t : test)
-        std::cout << t.x << " " << t.y << std::endl;
 
-    for(auto& t : test2)
-        std::cout << t.x << " " << t.y << std::endl;
 
     return 0;
 }
