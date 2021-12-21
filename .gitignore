@@ -1,5 +1,5 @@
-experimental/bin
-experimental/obj
+exp/bin
+exp/obj
 
 kernel/bin
 kernel/obj
