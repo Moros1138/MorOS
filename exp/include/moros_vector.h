@@ -14,6 +14,8 @@
 #   include "moros_initializer_list.h"
 #endif
 
+#include "moros_utility.h"
+
 namespace MorOS
 {
     template<class T, class Allocator = MorOS::allocator<T>>
@@ -255,7 +257,7 @@ namespace MorOS
             resize(size() + 1);
             
             // shift all elements after the insertIndex by 1 place
-            for(size_type i = insertIndex; i < size()-1; i++)
+            for(size_type i = size()-1; i >= insertIndex; i--)
                 _elements[i+1] = _elements[i];
             
             _elements[insertIndex] = value;
@@ -270,7 +272,7 @@ namespace MorOS
             resize(size() + 1);
             
             // shift all elements after the insertIndex by 1 place
-            for(size_type i = insertIndex; i < size()-1; i++)
+            for(size_type i = size()-1; i >= insertIndex; i--)
                 _elements[i+1] = _elements[i];
             
             _elements[insertIndex] = value;
@@ -278,8 +280,20 @@ namespace MorOS
             return (iterator)&_elements[insertIndex];
         }
 
-        // TODO: emplace
-        
+        // constructs an element in-place
+        template <typename... Args>
+        void emplace(const_iterator pos, Args&&... args)
+        {
+            size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
+            resize(_size + 1);
+
+            // shift all elements after the insertIndex by 1 place
+            for(size_type i = size()-1; i >= insertIndex; i--)
+                _elements[i+1] = _elements[i];
+
+            _elements[insertIndex] = value_type(MorOS::forward<Args>(args)...);
+        }
+
         // erase elements
         iterator erase(iterator pos)
         {
@@ -300,7 +314,13 @@ namespace MorOS
             _elements[_size - 1] = val;
         }
 
-        // TODO: emplace_back
+        // constructs an element in-place at the end
+        template <typename... Args>
+        void emplace_back(Args&&... args)
+        {
+            resize(_size + 1);
+            _elements[_size - 1] = value_type(MorOS::forward<Args>(args)...);
+        }
 
         // removes last element of the container
         void pop_back()
