@@ -18,7 +18,7 @@ LIB         := lib
 OBJ         := obj
 RES         := res
 
-CXX_FLAGS   := $(BUILD) -I$(INC) -Wall -Wextra -Wpedantic -std=c++17
+CXX_FLAGS   := $(BUILD) -I../STL/include -Wall -Wextra -Wpedantic -std=c++17
 
 #LIBRARIES   := -lX11 -lGL -lpthread -lpng -lstdc++fs 
 

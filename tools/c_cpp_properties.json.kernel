@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "/home/jon/opt/cross/lib/gcc/i686-elf/11.2.0/include/**",
+                "${workspaceFolder}/STL/include/**",
                 "${workspaceFolder}/kernel/include/**"
             ],
             "defines": ["__i386__"],

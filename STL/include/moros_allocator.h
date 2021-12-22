@@ -2,7 +2,9 @@
 #ifndef _CXX_MOROS_ALLOCATOR_H
 #define _CXX_MOROS_ALLOCATOR_H
 
-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+#include "moros_config.h"
+
+#if !defined(__MOROS_KERNEL__)
 #   include <stdio.h>
 #   include <assert.h>
 #else
@@ -12,7 +14,7 @@
 
 #include "moros_config.h"
 
-namespace MorOS
+namespace __MOROS_NAMESPACE__
 {
     template <typename T>
     class allocator 

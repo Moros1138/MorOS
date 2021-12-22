@@ -2,6 +2,8 @@
 #ifndef _CXX_MOROS_INITIALIZER_LIST_H
 #define _CXX_MOROS_INITIALIZER_LIST_H
 
+#include "moros_config.h"
+
 namespace std
 {
     template<class T>

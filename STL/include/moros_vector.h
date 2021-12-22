@@ -2,9 +2,11 @@
 #ifndef _CXX_MOROS_VECTOR_H
 #define _CXX_MOROS_VECTOR_H
 
+#include "moros_config.h"
 #include "moros_allocator.h"
+#include "moros_utility.h"
 
-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+#if !defined(__MOROS_KERNEL__)
 #   include <stdio.h>
 #   include <assert.h>
 #   include <initializer_list>
@@ -14,11 +16,10 @@
 #   include "moros_initializer_list.h"
 #endif
 
-#include "moros_utility.h"
 
-namespace MorOS
+namespace __MOROS_NAMESPACE__
 {
-    template<class T, class Allocator = MorOS::allocator<T>>
+    template<class T, class Allocator = __MOROS_NAMESPACE__::allocator<T>>
     class vector
     {
     //--------------------------------------------------------------
@@ -154,17 +155,49 @@ namespace MorOS
     // ITERATORS
     //--------------------------------------------------------------
     public:
-        // returns an iterator to the beginning
-        iterator begin(void) const
+        
+        iterator begin(void)
         {
             return _elements + 0;
         }
         
-        // returns an iterator to the end
-        iterator end(void) const
+        // returns an iterator to the beginning
+        const_iterator cbegin(void) const
+        {
+            return _elements + 0;
+        }
+        
+        iterator end(void)
         {
             return _elements + _size;
         }
+
+        // returns an iterator to the end
+        const_iterator cend(void) const
+        {
+            return _elements + _size;
+        }
+
+        iterator rbegin(void)
+        {
+            return end() -1;
+        }
+        
+        const_iterator crbegin(void)
+        {
+            return end() - 1;
+        }
+
+        iterator rend(void)
+        {
+            return begin() - 1;
+        }
+        
+        const_iterator crend(void)
+        {
+            return begin() - 1;
+        }
+
 
         // TODO: reverse iterators
 
@@ -250,8 +283,6 @@ namespace MorOS
         // insert items
         iterator insert(const_iterator pos, const_reference value)
         {
-            // TODO: this function could do with some optimization
-
             size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
             
             resize(size() + 1);
@@ -291,7 +322,7 @@ namespace MorOS
             for(size_type i = size()-1; i >= insertIndex; i--)
                 _elements[i+1] = _elements[i];
 
-            _elements[insertIndex] = value_type(MorOS::forward<Args>(args)...);
+            _elements[insertIndex] = value_type(__MOROS_NAMESPACE__::forward<Args>(args)...);
         }
 
         // erase elements
@@ -319,7 +350,7 @@ namespace MorOS
         void emplace_back(Args&&... args)
         {
             resize(_size + 1);
-            _elements[_size - 1] = value_type(MorOS::forward<Args>(args)...);
+            _elements[_size - 1] = value_type(__MOROS_NAMESPACE__::forward<Args>(args)...);
         }
 
         // removes last element of the container
@@ -399,7 +430,7 @@ namespace MorOS
         size_type _size;     // size
     };
 
-} // MorOS
+} // __MOROS_NAMESPACE__
 
 
 #endif // _CXX_MOROS_VECTOR_H

@@ -1,8 +1,9 @@
 // -*- C++ -*-
 
+#include "moros_config.h"
 #include "moros_vector.h"
 
-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+#if !defined(__MOROS_KERNEL__)
 #   include <stdio.h>
 #   include <assert.h>
 #   include <initializer_list>
@@ -12,9 +13,9 @@
 #   include "moros_initializer_list.h"
 #endif
 
-namespace MorOS
+namespace __MOROS_NAMESPACE__
 {
-    template <class T, class Allocator = MorOS::allocator<T>>
+    template <class T, class Allocator = __MOROS_NAMESPACE__::allocator<T>>
     class basic_string
     {
     //--------------------------------------------------------------
@@ -126,9 +127,9 @@ namespace MorOS
     
     
     private:
-        MorOS::vector<value_type> _container;
+        __MOROS_NAMESPACE__::vector<value_type> _container;
 
     };
 
     typedef basic_string<char> string;
-} // MorOS
+} // __MOROS_NAMESPACE__
