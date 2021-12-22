@@ -12,14 +12,14 @@ AS	:= nasm -f elf32
 LD	:= i686-elf-ld
 
 BIN	:= bin
-LIB := /home/jon/opt/cross/lib/gcc/i686-elf/11.2.0
+LIB := -L/home/jon/opt/cross/lib/gcc/i686-elf/11.2.0 -L../STL/lib
 INC	:= include
 OBJ	:= obj
 SRC	:= src
 
 CFLAGS	:= $(BUILD) -I$(INC) -Werror -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -std=c99
 CCFLAGS	:= $(BUILD) -I$(INC) -I../STL/include -Wall -Wextra -Wpedantic -nostdlib -fno-builtin -fno-leading-underscore -Wno-write-strings -fno-rtti -fno-exceptions -fno-use-cxa-atexit -std=c++17
-LDFLAGS	:= -L$(LIB) -lgcc
+LDFLAGS	:= $(LIB) -lgcc -lc++
 
 KERNEL		:= $(BIN)/kernel.bin
 IMAGE		:= $(BIN)/MorOS.iso
@@ -36,7 +36,6 @@ KERNEL_OBJS := \
 	obj/hardware/vga.o \
 	obj/hardware/serial.o \
 	obj/hardware/fpu.o \
-	obj/stdlib/cppstub.o \
 	obj/stdlib/math.o \
 	obj/stdlib/string.o \
 	obj/stdlib/random.o \
@@ -75,8 +74,8 @@ obj/%.o: src/%.bin
 
 # kernel
 $(KERNEL): $(KERNEL_OBJS)
-	@echo LD: linking $(KERNEL_OBJS)
-	@$(LD) -o $(KERNEL) $^ -Tsrc/link.ld $(LDFLAGS) $(BUILD)
+	# @echo LD: linking $(KERNEL_OBJS)
+	$(LD) -o $(KERNEL) $^ -Tsrc/link.ld $(LDFLAGS) $(BUILD)
 
 # create disk image
 $(IMAGE): $(KERNEL)
