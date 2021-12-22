@@ -29,12 +29,11 @@ namespace __MOROS_NAMESPACE__
 
         allocator()
         {
-           MOROS_DEBUG("MorOS::allocator()\n");
         }
 
         ~allocator()
         {
-            MOROS_DEBUG("MorOS::~allocator()\n");
+            MOROS_INFO("MorOS::~allocator()\n");
         }
 
         pointer allocate(size_type n, const void* hint = 0)
@@ -45,13 +44,13 @@ namespace __MOROS_NAMESPACE__
                 return 0;
             
             pointer ret = new value_type[n];
-            MOROS_DEBUG("MorOS::allocate(%ld, %ld) - pointer(%ld)\n", n, (size_type)hint, (size_type)ret);
+            MOROS_INFO("MorOS::allocate(%ld, %ld) - pointer(%ld)\n", n, (size_type)hint, (size_type)ret);
             return ret;
         }
 
         void deallocate(pointer p, size_type n)
         {
-            MOROS_DEBUG("MorOS::deallocate(%ld, %ld)\n", (size_type)p, n);
+            MOROS_INFO("MorOS::deallocate(%ld, %ld)\n", (size_type)p, n);
             delete[] p;
         }
     };
