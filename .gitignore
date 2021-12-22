@@ -4,6 +4,10 @@ exp/obj
 kernel/bin
 kernel/obj
 kernel/logs
-.vscode
 
+STL/lib
+STL/obj
+
+.vscode
 kernel/include/olcPixelGameEngine.h
+
