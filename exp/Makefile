@@ -24,8 +24,9 @@ CXX_FLAGS   := $(BUILD) -I../STL/include -Wall -Wextra -Wpedantic -std=c++17
 
 SOURCES     := $(wildcard $(SRC)/*.cpp)
 OBJECTS     := $(patsubst $(SRC)/%,$(OBJ)/%,$(SOURCES:.cpp=.o))
+OBJECTS_E   := $(patsubst $(SRC)/%,$(OBJ)/%,$(SOURCES:.cpp=.o.cpp))
 
-.PHONY: clean all
+.PHONY: clean pre all
 
 all: dirs $(BIN)/$(PROJECT) 
 
@@ -41,5 +42,14 @@ $(OBJ)/%.o : $(SRC)/%.cpp $(DEPENDENCIES)
 $(BIN)/$(PROJECT) : $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(BIN)/$(PROJECT) $(CXX_FLAGS) $(LIBRARIES)
 
+$(OBJ)/%.o.cpp : $(SRC)/%.cpp $(DEPENDENCIES)
+	@echo "Running Preprocessor"
+	@echo 
+	@$(CXX) -c -E $< -o $@ $(CXX_FLAGS)
+
+pre: $(OBJECTS_E)
+	@echo "Done"
+	@echo 
+
 clean:
-	rm -rf $(BIN)/$(PROJECT) $(OBJ)/*.o
+	rm -rf $(BIN)/$(PROJECT) $(OBJ)/*.o $(OBJ)/*.o.cpp
