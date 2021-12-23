@@ -50,6 +50,7 @@ namespace __MOROS_NAMESPACE__
 
         void deallocate(pointer p, size_type n)
         {
+            (void)(n);
             MOROS_INFO("MorOS::deallocate(%ld, %ld)\n", (size_type)p, n);
             delete[] p;
         }
