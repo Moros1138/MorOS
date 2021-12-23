@@ -52,4 +52,4 @@ pre: $(OBJECTS_E)
 	@echo 
 
 clean:
-	rm -rf $(BIN)/$(PROJECT) $(OBJ)/*.o $(OBJ)/*.o.cpp
+	rm -rf $(BIN)/$(PROJECT) $(OBJ)/*.o
