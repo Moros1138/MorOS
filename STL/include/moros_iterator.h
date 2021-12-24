@@ -16,6 +16,7 @@ namespace __MOROS_NAMESPACE__
     class iterator
     {
         public:
+            typedef iterator _self;
             typedef T value_type;
             typedef T& reference;
             typedef T* pointer;
@@ -26,33 +27,33 @@ namespace __MOROS_NAMESPACE__
                 : ptr_(ptr)
             { }
             
-            iterator& operator=(const iterator& rhs) = default;
+            _self& operator=(const _self& rhs) = default;
 
-            iterator operator--()
+            _self operator--()
             {
-                iterator temp = *this;
+                _self temp = *this;
                 ptr_--;
                 return temp;
             }
             
-            iterator operator--(int)
+            _self operator--(int)
             {
-                iterator temp = *this;
+                _self temp = *this;
                 ptr_--;
                 return temp;
             }
 
 
-            iterator operator++()
+            _self operator++()
             {
-                iterator temp = *this;
+                _self temp = *this;
                 ptr_++;
                 return temp;
             }
             
-            iterator operator++(int)
+            _self operator++(int)
             {
-                iterator temp = *this;
+                _self temp = *this;
                 ptr_++;
                 return temp;
             }
@@ -63,30 +64,30 @@ namespace __MOROS_NAMESPACE__
             pointer operator->()
             { return ptr_; }
             
-            iterator operator+(const int& rhs) const
+            _self operator+(const int& rhs) const
             {
-                return iterator((pointer)((size_t)ptr_ + (size_t)rhs * sizeof(T)));
+                return _self((pointer)((size_t)ptr_ + (size_t)rhs * sizeof(T)));
             }
             
-            iterator operator+(const iterator& rhs) const
+            _self operator+(const _self& rhs) const
             {
-                return iterator((pointer)((size_t)ptr_ + (size_t)rhs.ptr_));
+                return _self((pointer)((size_t)ptr_ + (size_t)rhs.ptr_));
             }
             
-            iterator operator-(const int& rhs) const
+            _self operator-(const int& rhs) const
             {
-                return iterator((pointer)((size_t)ptr_ - (size_t)rhs * sizeof(T)));
+                return _self((pointer)((size_t)ptr_ - (size_t)rhs * sizeof(T)));
             }
             
-            iterator operator-(const iterator& rhs) const
+            _self operator-(const _self& rhs) const
             {
-                return iterator((pointer)((size_t)ptr_ - (size_t)rhs.ptr_));
+                return _self((pointer)((size_t)ptr_ - (size_t)rhs.ptr_));
             }
 
-            bool operator==(const iterator& rhs)
+            bool operator==(const _self& rhs)
             { return ptr_ == rhs.ptr_; }
             
-            bool operator!=(const iterator& rhs)
+            bool operator!=(const _self& rhs)
             { return ptr_ != rhs.ptr_; }
 
         private:
