@@ -42,7 +42,7 @@ namespace __MOROS_NAMESPACE__
         
         basic_string(const basic_string<T>& rhs)
         {
-            MOROS_DEBUG("COPY\n");
+            MOROS_INFO("COPY\n");
             _container.clear();
             _container.~vector();
 

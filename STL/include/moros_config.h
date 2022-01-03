@@ -27,13 +27,14 @@
 #   define MOROS_INFO(...) do { } while(false)
 #endif
 
-#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
-#   define __MOROS_NAMESPACE__ MorOS
-#include <stddef.h>
-
-#else
-#   define __MOROS_NAMESPACE__ std
-#   define __MOROS_KERNEL__
+#if !defined(__MOROS_NAMESPACE__)
+#   if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+#       define __MOROS_NAMESPACE__ MorOS
+#       include <stddef.h>
+#   else
+#       define __MOROS_NAMESPACE__ std
+#       define __MOROS_KERNEL__
+#   endif
 #endif
 
 

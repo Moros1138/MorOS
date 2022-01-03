@@ -6,6 +6,7 @@
 
 #if !defined(__MOROS_KERNEL__)
 #   include <stdio.h>
+#   include <stdlib.h>
 #   include <assert.h>
 #else
 #   include "assert.h"
@@ -29,30 +30,32 @@ namespace __MOROS_NAMESPACE__
 
         allocator()
         {
+            MOROS_INFO("MorOS::allocator::allocator();\n");
         }
 
         ~allocator()
         {
-            MOROS_INFO("MorOS::~allocator()\n");
+            MOROS_INFO("MorOS::allocator::~allocator();\n");
         }
 
         pointer allocate(size_type n, const void* hint = 0)
         {
+            MOROS_INFO("MorOS::allocate(%ld, %ld) - ", n, (size_type)hint);
             (void)hint;
             
             if(n < 1)
                 return 0;
             
-            pointer ret = new value_type[n];
-            MOROS_INFO("MorOS::allocate(%ld, %ld) - pointer(%ld)\n", n, (size_type)hint, (size_type)ret);
+            pointer ret = (pointer)malloc(n * sizeof(value_type));
+            MOROS_INFO("pointer(0x%016lx)... success\n", (size_type)ret);
+
             return ret;
         }
 
         void deallocate(pointer p, size_type n)
         {
             (void)(n);
-            MOROS_INFO("MorOS::deallocate(%ld, %ld)\n", (size_type)p, n);
-            delete[] p;
+            free(p);
         }
     };
 

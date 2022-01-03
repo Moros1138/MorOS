@@ -16,6 +16,7 @@
 #   include "moros_initializer_list.h"
 #endif
 
+#include "moros_iterator.h"
 
 namespace __MOROS_NAMESPACE__
 {
@@ -31,8 +32,10 @@ namespace __MOROS_NAMESPACE__
         typedef const T* const_pointer;
         typedef T& reference;
         typedef const T& const_reference;
-        typedef pointer iterator;
-        typedef const_pointer const_iterator;
+        typedef __MOROS_NAMESPACE__::iterator<T> iterator;
+        typedef __MOROS_NAMESPACE__::reverse_iterator<T> reverse_iterator;
+        typedef const __MOROS_NAMESPACE__::iterator<T> const_iterator;
+        typedef const __MOROS_NAMESPACE__::reverse_iterator<T> const_reverse_iterator;
         typedef Allocator allocator_type;
         typedef size_t size_type;
 
@@ -53,13 +56,12 @@ namespace __MOROS_NAMESPACE__
         vector(std::initializer_list<value_type> ilist, const allocator_type& = allocator_type())
         {
             _init();
-            reserve(ilist.size());
+            // reserve(ilist.size());
             assign(ilist.begin(), ilist.end());
         }
 
         ~vector()
         {
-            allocator_type allocator;
             
             if(_elements)
                 allocator.deallocate(_elements, _capacity);
@@ -76,30 +78,28 @@ namespace __MOROS_NAMESPACE__
             
             return *this;
         }
-        
         // assigns values to the container
         void assign(size_type count, const_reference value)
         {
+            MOROS_INFO("MorOS::vector::assign(size_type count, const_reference value)\n");
             clear();
             for(size_type i = 0; i < count; i++)
                 push_back(value);
         }
-
         // assigns values to the container
         template <class InputIterator>
         void assign(InputIterator first, InputIterator last)
         {
+            MOROS_INFO("MorOS::vector::assign(InputIterator first, InputIterator last)\n");
             clear();
             for(; first != last; ++first)
             {
                 push_back(*first);
             }
         }
-        
         // returns the allocator associated with the container
         allocator_type get_allocator() const
         {
-            allocator_type allocator;
             return allocator;
         }
 
@@ -113,38 +113,32 @@ namespace __MOROS_NAMESPACE__
             _range_check(pos);
             return _elements[pos];
         }
-
         // access specified element wiht bounds checking
         const_reference at(size_type pos) const
         {
             _range_check(pos);
             return _elements[pos];
         }
-
         // access specified element
         reference operator[](size_type pos)
         {
             return _elements[pos];
         }
-
         // access specified element
         const_reference operator[](size_type pos) const
         {
             return _elements[pos];
         }
-
         // access the first element
         const_reference front() const
         {
             return *begin();
         }
-
         // access the last element
         const_reference back() const
         {
             return *(end() - 1);
         }
-
         // direct access to the underlying array
         pointer data()
         {
@@ -158,48 +152,38 @@ namespace __MOROS_NAMESPACE__
         
         iterator begin(void)
         {
-            return _elements + 0;
+            return iterator(_elements + 0);
         }
-        
         // returns an iterator to the beginning
         const_iterator cbegin(void) const
         {
-            return _elements + 0;
+            return const_iterator(begin());
         }
-        
         iterator end(void)
         {
-            return _elements + _size;
+            return iterator(_elements + _size);
         }
-
         // returns an iterator to the end
         const_iterator cend(void) const
         {
-            return _elements + _size;
+            return const_iterator(end());
         }
-
-        iterator rbegin(void)
+        reverse_iterator rbegin(void)
         {
-            return end() -1;
+            return reverse_iterator(_elements + _size - 1);
         }
-        
-        const_iterator crbegin(void)
+        const_reverse_iterator crbegin(void)
         {
-            return end() - 1;
+            return const_reverse_iterator(rbegin());
         }
-
-        iterator rend(void)
+        reverse_iterator rend(void)
         {
-            return begin() - 1;
+            return reverse_iterator(_elements - 1);
         }
-        
-        const_iterator crend(void)
+        const_reverse_iterator crend(void)
         {
-            return begin() - 1;
+            return const_reverse_iterator(rend());
         }
-
-
-        // TODO: reverse iterators
 
     //--------------------------------------------------------------
     // CAPACITY
@@ -210,26 +194,22 @@ namespace __MOROS_NAMESPACE__
         {
             return _size == 0;
         }
-        
         // returns the number of elements
         size_type size() const
         {
             return _size;
         }
-
         // returns the maximum possible number of elements
         size_type max_size() const
         {
             return (size_type)0xffffffff / sizeof(value_type);
         }
-
         // reserves storage
         void reserve(size_type new_cap)
         {
             if(new_cap < capacity())
                 return;
 
-            allocator_type allocator;
             pointer new_elements = allocator.allocate(new_cap);
             
             // copy elements
@@ -242,21 +222,17 @@ namespace __MOROS_NAMESPACE__
             _elements = new_elements;
             _capacity = new_cap;
         }
-        
         // returns the number of elements that can be held in current storage
         size_type capacity() const
         {
             return _capacity;
         }
-
         // requests removal of unused capacity
         void shrink_to_fit()
         {
             if(_size >= _capacity)
                 return;
 
-            allocator_type allocator;
-            
             pointer new_elements = allocator.allocate(_size);
 
             // copy elements            
@@ -279,52 +255,50 @@ namespace __MOROS_NAMESPACE__
         {
             _size = 0;
         }
-        
         // insert items
         iterator insert(const_iterator pos, const_reference value)
         {
-            size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
-            
+            iterator insertIndex = pos - begin();
             resize(size() + 1);
-            
-            // shift all elements after the insertIndex by 1 place
-            for(size_type i = size()-1; i >= insertIndex; i--)
-                _elements[i+1] = _elements[i];
-            
-            _elements[insertIndex] = value;
-            
-            return (iterator)&_elements[insertIndex];
-        }
+            insertIndex = begin() + insertIndex;
 
+            // shift all elements after the insertIndex by 1 place
+            for(auto it = end()-1; it != insertIndex-1; it--)
+                *(it+1) = *it;
+            
+            *insertIndex = value;
+            
+            return insertIndex;
+        }
+        // insert items
         iterator insert(const_iterator pos, T&& value)
         {
-            size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
-            
+            iterator insertIndex = pos - begin();
             resize(size() + 1);
-            
-            // shift all elements after the insertIndex by 1 place
-            for(size_type i = size()-1; i >= insertIndex; i--)
-                _elements[i+1] = _elements[i];
-            
-            _elements[insertIndex] = value;
-            
-            return (iterator)&_elements[insertIndex];
-        }
+            insertIndex = begin() + insertIndex;
 
+            // shift all elements after the insertIndex by 1 place
+            for(auto it = end()-1; it != insertIndex-1; it--)
+                *(it+1) = *it;
+            
+            *insertIndex = value;
+            
+            return insertIndex;
+        }
         // constructs an element in-place
         template <typename... Args>
         void emplace(const_iterator pos, Args&&... args)
         {
-            size_type insertIndex = ((size_type)pos - (size_type)begin()) / sizeof(value_type);
-            resize(_size + 1);
+            iterator insertIndex = pos - begin();
+            resize(size() + 1);
+            insertIndex = begin() + insertIndex;
 
             // shift all elements after the insertIndex by 1 place
-            for(size_type i = size()-1; i >= insertIndex; i--)
-                _elements[i+1] = _elements[i];
-
-            _elements[insertIndex] = value_type(__MOROS_NAMESPACE__::forward<Args>(args)...);
+            for(auto it = end()-1; it != insertIndex-1; it--)
+                *(it+1) = *it;
+            
+            *insertIndex = value_type(__MOROS_NAMESPACE__::forward<Args>(args)...);
         }
-
         // erase elements
         iterator erase(iterator pos)
         {
@@ -337,39 +311,38 @@ namespace __MOROS_NAMESPACE__
             
             return pos;
         }
-
         // adds an element to the end
         void push_back(const_reference val)
         {
+            MOROS_INFO("MorOS::vector::push_back(const_reference val)\n");
             resize(size() + 1);
-            _elements[_size - 1] = val;
+            *(end()-1) = val;
+            
         }
-
         // constructs an element in-place at the end
         template <typename... Args>
         void emplace_back(Args&&... args)
         {
-            resize(_size + 1);
-            _elements[_size - 1] = value_type(__MOROS_NAMESPACE__::forward<Args>(args)...);
+            MOROS_INFO("MorOS::vector::emplace_back(Args&&... args)\n");
+            resize(size() + 1);
+            *(end()-1) = value_type(__MOROS_NAMESPACE__::forward<Args>(args)...);
         }
-
         // removes last element of the container
         void pop_back()
         {
             if(!empty())
                 _size--;
         }
-
         // resizes the container to contain count elements
         void resize(size_type count)
         {
+            MOROS_INFO("MorOS::vector::resize(size_type count)\n");
             if(count < 1)
                 return;
             
             if(count > capacity())
             {
                 size_type n = (count > recommended_size()) ? count : recommended_size();
-                allocator_type allocator;
                 
                 pointer new_elements = allocator.allocate(n);
 
@@ -388,7 +361,6 @@ namespace __MOROS_NAMESPACE__
             
             _size = count;
         }
-        
         // swaps the contents
         void swap(vector& x)
         {
@@ -404,12 +376,10 @@ namespace __MOROS_NAMESPACE__
             _capacity = 0;
             _elements = 0;
         }
-        
         void _range_check(size_type n)
         {
             assert(!(n >= size()));
         }
-        
         // internal swap function, see (swap)
         template <class Ty>
         inline void __swap(Ty& x, Ty& y)
@@ -418,13 +388,13 @@ namespace __MOROS_NAMESPACE__
             x = y;
             y = c;
         }
-
         size_type recommended_size() const
         {
             size_type s = 2 * capacity();
             return s;
         }
 
+        allocator_type allocator; // allocator
         size_type _capacity; // capacity
         pointer _elements;   // the actual data
         size_type _size;     // size
