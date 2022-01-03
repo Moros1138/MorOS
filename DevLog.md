@@ -1,3 +1,12 @@
+# January 3, 2022 (Monday)
+First, HAPPY NEW YEAR!!!
+
+I've decided that I wanted to make a game more than I felt like implementing the C++ STL. The consequences of that decision is the abandonment of the idea of using the old::PixelGameEngine API to drive the creation of the game. I believe I have sufficient functionality developed to make a game, as is.
+
+I still intend to write the game routines in C++ because I rather like namespaces and classes, just a few of the nice things C++ gives me without having to reinvent the wheel too much. 
+
+A note about C++ and STL. I'll be leaving my STL work in the repo in case I decide to use what I've got working, so with the project. I just don't want the focus of this particular project to be that of reinventing the C++ STL wheel.
+
 # December 10, 2021 (Friday) - Hell if I know!
 Sooo.. everything we've accomplished so far. Assume that I have scrapped it all and started over. While some things may look similar, the entire system, step by step has been painstakingly reimplemented in an attempt to understand what's going on!
 
