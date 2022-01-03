@@ -1,11 +1,9 @@
-#include "engine.h"
-#include "string"
+#include "stdlib.h"
 
 int main()
 {
     srand(0);
     
-    
-    
+
     return 0;
 }
