@@ -327,6 +327,7 @@ void vga_text_scroll()
         *(i + 0) = ' ';
         *(i + 1) = vgaTextAttribute;
     }
+    vga_text_swap();
 }
 
 void vga_text_putc(char ch)
